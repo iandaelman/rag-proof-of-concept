@@ -3,6 +3,7 @@ langchain-core
 langchain-ollama
 langchain-chroma
 langchain-community
+langchain-huggingface
 python-docx
 nltk
 rouge_score
@@ -11,4 +12,6 @@ pandas
 gradio
 dotenv
 ollama
-
+numpy
+scikit-learn
+plotly
