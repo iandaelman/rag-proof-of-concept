@@ -187,3 +187,9 @@ nohup.out
 *.png
 
 scraper_cache/
+
+# Ignore all content in knowledge-base
+knowledge-base/**
+
+# But allow the folder itself to be tracked
+!knowledge-base/
