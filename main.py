@@ -1,4 +1,3 @@
-# This is a sample Python script.
 from langgraph.constants import START
 from langgraph.graph import StateGraph
 
