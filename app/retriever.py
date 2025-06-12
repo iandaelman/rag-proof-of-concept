@@ -31,9 +31,6 @@ def generate(state: State):
     """)
     llm = initialize_llm()
     docs_content = "\n\n".join(doc.page_content for doc in state["context"])
-
     messages = prompt.invoke({"question": state["question"], "context": docs_content})
-    print(messages)
     response = llm.invoke(messages)
-    print(response)
     return {"answer": response.content}
