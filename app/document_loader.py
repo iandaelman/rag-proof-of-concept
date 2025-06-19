@@ -14,6 +14,7 @@ loader_mapping = {
     ".txt": TextLoader,
     ".pdf": PyPDFLoader,
     ".docx": UnstructuredWordDocumentLoader,
+    ".doc": UnstructuredWordDocumentLoader,
 }
 
 def add_metadata(doc, doc_type):
