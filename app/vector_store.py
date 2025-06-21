@@ -4,10 +4,7 @@ from langchain_chroma import Chroma
 from langchain_community.document_loaders import (
     TextLoader,
     PyPDFLoader,
-    UnstructuredWordDocumentLoader,
-    DirectoryLoader,
-)
-from langchain_community.vectorstores import Chroma
+    UnstructuredWordDocumentLoader)
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
@@ -17,7 +14,7 @@ def add_metadata(doc, doc_type):
     return doc
 
 
-def build_vector_store(path="knowledge-base", embeddings_function=None):
+def build_vector_store(path="knowledge-base-doc", embeddings_function=None):
     # Define the directory containing the text file and the persistent directory
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     persistent_directory = os.path.join(base_dir, "vector_db", "chroma_db")
@@ -53,13 +50,14 @@ def build_vector_store(path="knowledge-base", embeddings_function=None):
                         print(f"Failed to load file {doc_file_path}: {e}")
 
         # Split the document into chunks
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=5000, chunk_overlap=500)
     docs = text_splitter.split_documents(documents)
 
     # Display information about the split documents
     print("\n--- Document Chunks Information ---")
     print(f"Number of document chunks: {len(docs)}")
-    print(f"Sample chunk:\n{docs[0].page_content}\n")
+    for doc in docs:
+        print(f"Sample chunk:\n{doc.page_content}\n")
 
     # Create the vector store and persist it automatically
     print("\n--- Creating vector store ---")

@@ -4,7 +4,7 @@ from app.vector_store import retrieve_vector_store
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    query = "Vivian VACHAUDEZ"
+    query = "Bupa Fisc"
     vector_store = retrieve_vector_store()
     retriever = vector_store.as_retriever(
         search_kwargs={"k": 4}
