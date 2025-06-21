@@ -6,7 +6,7 @@ from langchain_community.document_loaders import (
     UnstructuredWordDocumentLoader,
     DirectoryLoader,
 )
-from langchain.text_splitter import CharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 # File extensions to loader mapping
 loader_mapping = {
@@ -14,6 +14,7 @@ loader_mapping = {
     ".txt": TextLoader,
     ".pdf": PyPDFLoader,
     ".docx": UnstructuredWordDocumentLoader,
+    ".doc": UnstructuredWordDocumentLoader,
 }
 
 def add_metadata(doc, doc_type):
@@ -43,5 +44,5 @@ def load_documents_from_knowledge_base(path="knowledge-base"):
     return documents
 
 def split_documents(documents, chunk_size=1000, chunk_overlap=200):
-    text_splitter = CharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
     return text_splitter.split_documents(documents)
