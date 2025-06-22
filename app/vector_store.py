@@ -14,7 +14,7 @@ def add_metadata(doc, doc_type):
     return doc
 
 
-def build_vector_store(path="knowledge-base-doc", embeddings_function=None):
+def build_vector_store(path="knowledge-base-doc"):
     # Define the directory containing the text file and the persistent directory
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     persistent_directory = os.path.join(base_dir, "vector_db", "chroma_db")
@@ -59,22 +59,21 @@ def build_vector_store(path="knowledge-base-doc", embeddings_function=None):
     for doc in docs:
         print(f"Sample chunk:\n{doc.page_content}\n")
 
-    # Create the vector store and persist it automatically
-    print("\n--- Creating vector store ---")
-    db = Chroma.from_documents(
-        docs, embeddings_function, persist_directory=persistent_directory)
-    print("\n--- Finished creating vector store ---")
-    return db
-
-
-def retrieve_vector_store():
-    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    persistent_directory = os.path.join(base_dir, "vector_db", "chroma_db")
     print("\n--- Creating embeddings ---")
     embeddings_function = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
     print("\n--- Finished creating embeddings ---")
+
+    # Create the vector store and persist it automatically
+    print("\n--- Creating vector store ---")
+    Chroma.from_documents(
+        docs, embeddings_function, persist_directory=persistent_directory)
+    print("\n--- Finished creating vector store ---")
+
+
+def init_vector_store():
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    persistent_directory = os.path.join(base_dir, "vector_db", "chroma_db")
     if not os.path.exists(persistent_directory):
-        return build_vector_store(embeddings_function=embeddings_function)
+        build_vector_store()
     else:
         print("Vector store already exists. No need to initialize.")
-        return Chroma(embedding_function=embeddings_function, persist_directory=persistent_directory)
