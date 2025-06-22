@@ -12,7 +12,7 @@ def generate_answer(relevant_documents=None, query=None, model_name="llama3.2"):
             + "\n\n".join([doc.page_content for doc in relevant_documents])
             + "\n\nPlease provide an answer based only on the provided documents. If the answer is not found in the documents, respond with 'I'm not sure'."
     )
-    model = ChatOllama(model=model_name)
+    model = ChatOllama(temperature=0.1,model=model_name)
     messages = [
         SystemMessage(content="You are an expert in answering accurate questions about the IT support process of MyMinfin. Give brief, accurate answers. If you don't know the answer, say so. Do not make anything up if you haven't been provided with relevant context."),
         HumanMessage(content=combined_input),
