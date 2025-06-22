@@ -1,20 +1,23 @@
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-import asyncio
-import os
 
-from app.generate import generate_answer
-from app.retriever import retrieve_documents, RetrievalMethod
+from langgraph.constants import START
+from langgraph.graph import StateGraph
+
+from app.generate import generate
+from app.retriever import retrieve
+from app.utils.State import State
 from app.vector_store import init_vector_store
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    graph_builder = StateGraph(State).add_sequence([retrieve, generate])
+    graph_builder.add_edge(START, "retrieve")
+    graph = graph_builder.compile()
     query = "Wie is Patrick Colmant"
-    document_source_extension = "doc"
-    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    persistent_directory = os.path.join(base_dir, "vector_db", "chroma_db")
-    db_name = f"chroma_db_{document_source_extension}"
-    init_vector_store(document_path=f"knowledge-base-{document_source_extension}", db_name=db_name)
-    relevant_docs = retrieve_documents(store_name=db_name, query=query,
-                                       retrieval_method=RetrievalMethod.SIMILARITY_SEARCH)
-    generate_answer(relevant_docs, query)
+    init_vector_store(document_path="knowledge-base-doc", db_name="chroma_db_doc")
+
+    # relevant_docs = retrieve_documents(store_name="chroma_db_doc", query=query,
+    #                                    retrieval_method=RetrievalMethod.SIMILARITY_SEARCH)
+    response = graph.invoke({"query": query})
+    print(response.answer)

@@ -1,5 +1,9 @@
+from click import prompt
 from langchain_core.messages import SystemMessage, HumanMessage
+from langchain_core.prompts import ChatPromptTemplate
 from langchain_ollama import ChatOllama
+
+from app.utils.State import State
 
 
 def generate_answer(relevant_documents=None, query=None, model_name="llama3.2"):
@@ -12,9 +16,10 @@ def generate_answer(relevant_documents=None, query=None, model_name="llama3.2"):
             + "\n\n".join([doc.page_content for doc in relevant_documents])
             + "\n\nPlease provide an answer based only on the provided documents. If the answer is not found in the documents, respond with 'I'm not sure'."
     )
-    model = ChatOllama(temperature=0.1,model=model_name)
+    model = ChatOllama(temperature=0.1, model=model_name)
     messages = [
-        SystemMessage(content="You are an expert in answering accurate questions about the IT support process of MyMinfin. Give brief, accurate answers. If you don't know the answer, say so. Do not make anything up if you haven't been provided with relevant context."),
+        SystemMessage(
+            content="You are an expert in answering accurate questions about the IT support process of MyMinfin. Give brief, accurate answers. If you don't know the answer, say so. Do not make anything up if you haven't been provided with relevant context."),
         HumanMessage(content=combined_input),
     ]
     result = model.invoke(messages)
@@ -22,4 +27,17 @@ def generate_answer(relevant_documents=None, query=None, model_name="llama3.2"):
     print("Full result:")
     print(result)
     print("Content only:")
-    print(result.content)
+    return {"answer": result.content}
+
+
+def generate(state: State):
+    docs_content = "\n\n".join(doc.page_content for doc in state["context"])
+    prompt = ChatPromptTemplate([("system", """
+    You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use three sentences maximum and keep the answer concise.
+    Question: (query) 
+    Context: (context) 
+    Answer:""")])
+    model = ChatOllama(temperature=0.1, model=state["model_name"])
+    messages = prompt.invoke({"query": state["query"], "context": docs_content})
+    response = model.invoke(messages)
+    return {"answer": response.content}

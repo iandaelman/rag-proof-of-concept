@@ -1,19 +1,16 @@
 import os
 
-from enum import Enum
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 
-
-class RetrievalMethod(Enum):
-    SIMILARITY_SEARCH = "similarity"
-    MMR = "mmr"
-    SIMILARITY_SCORE_THRESHOLD = "similarity_score_threshold"
+from app.utils.RetrievalMethod import RetrievalMethod
+from app.utils.State import State
 
 
-def query_vector_store(persistent_directory, store_name, query, embedding_function, search_type, search_kwargs):
+def query_vector_store(persistent_directory, store_name, query, search_type, search_kwargs):
     if os.path.exists(persistent_directory):
         print(f"\n--- Querying the Vector Store {store_name} ---")
+        embedding_function = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
         db = Chroma(
             persist_directory=persistent_directory,
             embedding_function=embedding_function,
@@ -38,17 +35,16 @@ def query_vector_store(persistent_directory, store_name, query, embedding_functi
 def retrieve_documents(
         query,
         store_name="chroma_db",
-        embeddings=HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2"),
         retrieval_method=RetrievalMethod.SIMILARITY_SEARCH):
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     persistent_directory = os.path.join(base_dir, "vector_db", store_name)
+
     # Use the specified retrieval method or default to showcasing all methods
     if retrieval_method == RetrievalMethod.SIMILARITY_SEARCH:
         print("\n--- Using Similarity Search ---")
         return query_vector_store(persistent_directory,
                                   store_name,
                                   query,
-                                  embeddings,
                                   retrieval_method.value,
                                   {"k": 3})
 
@@ -58,7 +54,6 @@ def retrieve_documents(
             persistent_directory,
             store_name,
             query,
-            embeddings,
             retrieval_method.value,
             {"k": 3, "fetch_k": 20, "lambda_mult": 0.5},
         )
@@ -69,7 +64,6 @@ def retrieve_documents(
             persistent_directory,
             store_name,
             query,
-            embeddings,
             retrieval_method.value,
             {"score_threshold": 0.1},
         )
@@ -77,7 +71,11 @@ def retrieve_documents(
     else:
         # Default behavior: use Similarity Search
         print("\n--- Using Similarity Search ---")
-        return query_vector_store(store_name, query, embeddings, "similarity", {"k": 3})
+        return query_vector_store(persistent_directory,
+                                  store_name,
+                                  query,
+                                  RetrievalMethod.SIMILARITY_SEARCH.value,
+                                  {"k": 3})
 
 
 def test_different_retrieval_methods(store_name="chroma_db",
@@ -124,3 +122,12 @@ def test_different_retrieval_methods(store_name="chroma_db",
     )
 
     print("Querying demonstrations with different search types completed.")
+
+
+def retrieve(state: State):
+    retrieved_docs = query_vector_store(state["persistent_directory"],
+                                        state["store_name"],
+                                        state["query"],
+                                        state["retrieval_method"].value,
+                                        state["search_kwargs"])
+    return {"context": retrieved_docs}
