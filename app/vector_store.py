@@ -14,10 +14,10 @@ def add_metadata(doc, doc_type):
     return doc
 
 
-def build_vector_store(path="knowledge-base-doc"):
+def build_vector_store(document_path=None, db_name=None):
     # Define the directory containing the text file and the persistent directory
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    persistent_directory = os.path.join(base_dir, "vector_db", "chroma_db")
+    persistent_directory = os.path.join(base_dir, "vector_db", db_name)
     loader_mapping = {
         ".md": TextLoader,
         ".txt": TextLoader,
@@ -31,7 +31,7 @@ def build_vector_store(path="knowledge-base-doc"):
 
     documents = []
     # Iterate over each folder in the path
-    for folder in glob.glob(f"{path}/*"):
+    for folder in glob.glob(f"{document_path}/*"):
         print(folder)
         if os.path.isdir(folder):
             # Iterate over each file in the folder
@@ -70,10 +70,10 @@ def build_vector_store(path="knowledge-base-doc"):
     print("\n--- Finished creating vector store ---")
 
 
-def init_vector_store():
+def init_vector_store(document_path="knowledge-base-doc", db_name="chroma_db_doc"):
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    persistent_directory = os.path.join(base_dir, "vector_db", "chroma_db")
+    persistent_directory = os.path.join(base_dir, "vector_db", db_name)
     if not os.path.exists(persistent_directory):
-        build_vector_store()
+        build_vector_store(document_path=document_path, db_name=db_name)
     else:
         print("Vector store already exists. No need to initialize.")

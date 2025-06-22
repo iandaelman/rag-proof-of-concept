@@ -3,6 +3,8 @@ from langchain_ollama import ChatOllama
 
 
 def generate_answer(relevant_documents=None, query=None, model_name="llama3.2"):
+    print("\n--- Generating Answer with ---")
+    print(f"\n--- Query: {query} ---")
     combined_input = (
             "Here are some documents that might help answer the question: "
             + query
@@ -10,7 +12,7 @@ def generate_answer(relevant_documents=None, query=None, model_name="llama3.2"):
             + "\n\n".join([doc.page_content for doc in relevant_documents])
             + "\n\nPlease provide an answer based only on the provided documents. If the answer is not found in the documents, respond with 'I'm not sure'."
     )
-    model = ChatOllama(model="gemma3:latest")
+    model = ChatOllama(model=model_name)
     messages = [
         SystemMessage(content="You are a helpful assistant."),
         HumanMessage(content=combined_input),
