@@ -4,9 +4,8 @@ import os
 
 from langgraph.constants import START
 from langgraph.graph import StateGraph
-
-from app.generate import generate, generate_answer
-from app.retriever import retrieve, retrieve_documents
+from app.generate import generate
+from app.retriever import retrieve
 from app.utils.RetrievalMethod import RetrievalMethod
 from app.utils.State import State
 from app.vector_store import init_vector_store
@@ -20,12 +19,7 @@ if __name__ == '__main__':
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
     persistent_directory = os.path.join(base_dir, "vector_db", store_name)
     query = "Wie is Patrick Colmant"
-    init_vector_store(document_path="knowledge-base-doc", db_name="chroma_db_doc")
-
-    # relevant_docs = retrieve_documents(store_name="chroma_db_doc", query=query,
-    #                                    retrieval_method=RetrievalMethod.SIMILARITY_SEARCH)
-    # generate_answer(relevant_docs, query)
-
+    init_vector_store(document_path="knowledge-base-doc", db_name=store_name)
     state = graph.invoke(
         {"query": query,
          "retrieval_method": RetrievalMethod.SIMILARITY_SEARCH,

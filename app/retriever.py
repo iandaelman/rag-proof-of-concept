@@ -7,6 +7,17 @@ from app.utils.RetrievalMethod import RetrievalMethod
 from app.utils.State import State
 
 
+def retrieve(state: State):
+    print("\n--- Retrieving documents ---")
+    retrieved_docs = query_vector_store(state["persistent_directory"],
+                                        state["store_name"],
+                                        state["query"],
+                                        state["retrieval_method"].value,
+                                        state["search_kwargs"])
+    print("\n--- Retrieved documents ---")
+    return {"context": retrieved_docs}
+
+
 def query_vector_store(persistent_directory, store_name, query, search_type, search_kwargs):
     if os.path.exists(persistent_directory):
         print(f"\n--- Querying the Vector Store {store_name} ---")
@@ -30,52 +41,6 @@ def query_vector_store(persistent_directory, store_name, query, search_type, sea
     else:
         print(f"Vector store {store_name} does not exist. Therefor we could not return any documents")
         return None
-
-
-def retrieve_documents(
-        query,
-        store_name="chroma_db",
-        retrieval_method=RetrievalMethod.SIMILARITY_SEARCH):
-    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    persistent_directory = os.path.join(base_dir, "vector_db", store_name)
-
-    # Use the specified retrieval method or default to showcasing all methods
-    if retrieval_method == RetrievalMethod.SIMILARITY_SEARCH:
-        print("\n--- Using Similarity Search ---")
-        return query_vector_store(persistent_directory,
-                                  store_name,
-                                  query,
-                                  retrieval_method.value,
-                                  {"k": 3})
-
-    elif retrieval_method == RetrievalMethod.MMR:
-        print("\n--- Using Max Marginal Relevance (MMR) ---")
-        return query_vector_store(
-            persistent_directory,
-            store_name,
-            query,
-            retrieval_method.value,
-            {"k": 3, "fetch_k": 20, "lambda_mult": 0.5},
-        )
-
-    elif retrieval_method == RetrievalMethod.SIMILARITY_SCORE_THRESHOLD:
-        print("\n--- Using Similarity Score Threshold ---")
-        return query_vector_store(
-            persistent_directory,
-            store_name,
-            query,
-            retrieval_method.value,
-            {"score_threshold": 0.1},
-        )
-
-    else:
-        # Default behavior: use Similarity Search
-        print("\n--- Using Similarity Search ---")
-        return query_vector_store(persistent_directory,
-                                  store_name,
-                                  query,
-                                  RetrievalMethod.SIMILARITY_SEARCH.value,
-                                  {"k": 3})
 
 
 def test_different_retrieval_methods(store_name="chroma_db",
@@ -122,14 +87,3 @@ def test_different_retrieval_methods(store_name="chroma_db",
     )
 
     print("Querying demonstrations with different search types completed.")
-
-
-def retrieve(state: State):
-    print("\n--- Retrieving documents ---")
-    retrieved_docs = query_vector_store(state["persistent_directory"],
-                                        state["store_name"],
-                                        state["query"],
-                                        state["retrieval_method"].value,
-                                        state["search_kwargs"])
-    print("\n--- Retrieved documents ---")
-    return {"context": retrieved_docs}
