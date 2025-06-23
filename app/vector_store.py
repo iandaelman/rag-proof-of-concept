@@ -65,15 +65,19 @@ def build_vector_store(document_path=None, db_name=None):
 
     # Create the vector store and persist it automatically
     print("\n--- Creating vector store ---")
-    Chroma.from_documents(
+    db = Chroma.from_documents(
         docs, embeddings_function, persist_directory=persistent_directory)
     print("\n--- Finished creating vector store ---")
+    return db
 
 
 def init_vector_store(document_path="knowledge-base-doc", db_name="chroma_db_doc"):
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     persistent_directory = os.path.join(base_dir, "vector_db", db_name)
     if not os.path.exists(persistent_directory):
-        build_vector_store(document_path=document_path, db_name=db_name)
+        return build_vector_store(document_path=document_path, db_name=db_name)
     else:
         print("Vector store already exists. No need to initialize.")
+        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        persistent_directory = os.path.join(base_dir, "vector_db", db_name)
+        return Chroma(persist_directory=persistent_directory)
