@@ -1,11 +1,13 @@
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import os
 
 from langgraph.constants import START
 from langgraph.graph import StateGraph
 
 from app.generate import generate
 from app.retriever import retrieve
+from app.utils.RetrievalMethod import RetrievalMethod
 from app.utils.State import State
 from app.vector_store import init_vector_store
 
@@ -14,10 +16,20 @@ if __name__ == '__main__':
     graph_builder = StateGraph(State).add_sequence([retrieve, generate])
     graph_builder.add_edge(START, "retrieve")
     graph = graph_builder.compile()
+    store_name = "chroma_db_doc"
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+    persistent_directory = os.path.join(base_dir, "vector_db", store_name)
     query = "Wie is Patrick Colmant"
     init_vector_store(document_path="knowledge-base-doc", db_name="chroma_db_doc")
 
     # relevant_docs = retrieve_documents(store_name="chroma_db_doc", query=query,
     #                                    retrieval_method=RetrievalMethod.SIMILARITY_SEARCH)
-    response = graph.invoke({"query": query})
-    print(response.answer)
+    state = graph.invoke(
+        {"query": query,
+         "retrieval_method": RetrievalMethod.SIMILARITY_SEARCH,
+         "persistent_directory": persistent_directory,
+         "store_name": store_name,
+         "search_kwargs": {"k": 3},
+         "model_name": "llama3.2"
+         })
+    print(state["response"])

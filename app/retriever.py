@@ -125,9 +125,11 @@ def test_different_retrieval_methods(store_name="chroma_db",
 
 
 def retrieve(state: State):
+    print("\n--- Retrieving documents ---")
     retrieved_docs = query_vector_store(state["persistent_directory"],
                                         state["store_name"],
                                         state["query"],
                                         state["retrieval_method"].value,
                                         state["search_kwargs"])
+    print("\n--- Retrieved documents ---")
     return {"context": retrieved_docs}

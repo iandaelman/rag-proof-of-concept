@@ -1,3 +1,4 @@
+from langchain_core.messages import BaseMessage
 from typing_extensions import List, TypedDict
 from langchain_core.documents import Document
 
@@ -7,7 +8,7 @@ from app.utils.RetrievalMethod import RetrievalMethod
 class State(TypedDict):
     query: str
     context: List[Document]
-    answer: str
+    response: BaseMessage
     retrieval_method: RetrievalMethod
     persistent_directory:str
     store_name:str
