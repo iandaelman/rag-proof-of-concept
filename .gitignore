@@ -192,5 +192,6 @@ scraper_cache/
 knowledge-base/**
 
 # But allow the folder itself to be tracked
-!knowledge-base/
+knowledge-base-doc/
+knowledge-base-pdf/
 /chroma_knowledge_base_db/

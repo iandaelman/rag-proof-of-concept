@@ -9,7 +9,6 @@ nltk
 rouge_score
 bert_score
 pandas
-gradio
 dotenv
 ollama
 numpy
