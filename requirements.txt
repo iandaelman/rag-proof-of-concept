@@ -9,10 +9,12 @@ nltk
 rouge_score
 bert_score
 pandas
-gradio
 dotenv
 ollama
 numpy
 scikit-learn
 plotly
 pypdf
+typing_extensions
+langchain-text-splitters
+langgraph

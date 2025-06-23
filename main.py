@@ -1,24 +1,35 @@
-# This is a sample Python script.
-from app.document_loader import load_documents_from_knowledge_base, split_documents
-from app.embedder import create_datastore
-from app.gradio_ui import init_chat_chain, chat
-from app.retriever import initialize_llm
-
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import os
+
+from langgraph.constants import START
+from langgraph.graph import StateGraph
+from app.generate import generate
+from app.retriever import retrieve
+from app.utils.RetrievalMethod import RetrievalMethod
+from app.utils.State import State
+from app.vector_store import init_vector_store
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    documents = load_documents_from_knowledge_base()
-    chunks = split_documents(documents=documents)
-    vectorstore = create_datastore(chunks)
-    llm, memory = initialize_llm("llama3.2")
-    retriever = vectorstore.as_retriever()
+    graph_builder = StateGraph(State).add_sequence([retrieve, generate])
+    graph_builder.add_edge(START, "retrieve")
+    graph = graph_builder.compile()
+    store_name = "chroma_db_doc"
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+    persistent_directory = os.path.join(base_dir, "vector_db", store_name)
+    query = "Wie is Patrick Colmant"
+    init_vector_store(document_path="knowledge-base-doc", db_name=store_name)
+    state = graph.invoke(
+        {"query": query,
+         "retrieval_method": RetrievalMethod.SIMILARITY_SEARCH,
+         "persistent_directory": persistent_directory,
+         "store_name": store_name,
+         "search_kwargs": {"k": 3},
+         "model_name": "llama3.2"
+         })
+    print(f"\n--- Received response ---")
+    print(state["response"])
+    print(f"\n--- Received content ---")
+    print(state["response"].content)
 
-    init_chat_chain(llm, retriever, memory)
-
-    question = "Qu'est-ce qu'un switchMap ?"
-    answer = chat(question)
-    print(answer)
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
