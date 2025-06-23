@@ -33,17 +33,15 @@ def generate_answer(relevant_documents=None, query=None, model_name="llama3.2"):
 def generate(state: State):
     print("\n--- Generating awnser ---")
     docs_content = "\n\n".join(doc.page_content for doc in state["context"])
-    # TODO something is off with the prompt check the content and query are not passed in
-    prompt = ChatPromptTemplate([("system", """
-    You are an assistant for question-answering tasks. 
-    Use the following pieces of retrieved context to answer the question. 
-    If you don't know the answer, just say that you don't know. 
-    Question: (query) 
-    Context: (context) 
-    Answer:""")])
+    prompt_template = ChatPromptTemplate([
+        ("system", "You are an assistant for question-answering tasks."),
+        ("human", """Use the following pieces of retrieved context to answer the question. 
+        If you don't know the answer, just say that you don't know. 
+        Question: {query} 
+        Context: {context} """)])
     print("\n--- Initializing LLM model ---")
     model = ChatOllama(temperature=0.1, model=state["model_name"])
-    messages = prompt.invoke({"query": state["query"], "context": docs_content})
+    messages = prompt_template.invoke({"query": state["query"], "context": docs_content})
     print(f"\n--- Invoking LLM model with {messages} ---")
     response = model.invoke(messages)
     return {"response": response}

@@ -5,8 +5,8 @@ import os
 from langgraph.constants import START
 from langgraph.graph import StateGraph
 
-from app.generate import generate
-from app.retriever import retrieve
+from app.generate import generate, generate_answer
+from app.retriever import retrieve, retrieve_documents
 from app.utils.RetrievalMethod import RetrievalMethod
 from app.utils.State import State
 from app.vector_store import init_vector_store
@@ -24,6 +24,8 @@ if __name__ == '__main__':
 
     # relevant_docs = retrieve_documents(store_name="chroma_db_doc", query=query,
     #                                    retrieval_method=RetrievalMethod.SIMILARITY_SEARCH)
+    # generate_answer(relevant_docs, query)
+
     state = graph.invoke(
         {"query": query,
          "retrieval_method": RetrievalMethod.SIMILARITY_SEARCH,
@@ -32,4 +34,8 @@ if __name__ == '__main__':
          "search_kwargs": {"k": 3},
          "model_name": "llama3.2"
          })
+    print(f"\n--- Received response ---")
     print(state["response"])
+    print(f"\n--- Received content ---")
+    print(state["response"].content)
+
