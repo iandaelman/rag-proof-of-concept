@@ -99,8 +99,13 @@ if __name__ == '__main__':
 
     input_message = "Hello who is Patrick Colmant?"
     print("--- Loading response ---")
-    for step in graph.stream(
-            {"messages": [{"role": "user", "content": input_message}]},
-            stream_mode="values",
-    ):
-        step["messages"][-1].pretty_print()
+    while True:
+        input_message = input("User: ")
+        if input_message.lower() in {"exit", "quit"}:
+            break
+
+        for step in graph.stream(
+                {"messages": [{"role": "user", "content": input_message}]},
+                stream_mode="values",
+        ):
+            step["messages"][-1].pretty_print()
