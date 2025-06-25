@@ -9,8 +9,6 @@ from langgraph.graph import END
 from langgraph.graph import StateGraph, MessagesState
 from langgraph.prebuilt import ToolNode
 from langgraph.prebuilt import tools_condition
-
-from app.retriever import retrieve
 from app.vector_store import init_vector_store
 
 # Press the green button in the gutter to run the script.
@@ -21,7 +19,7 @@ if __name__ == '__main__':
     persistent_directory = os.path.join(base_dir, "vector_db", store_name)
     vector_store = init_vector_store(document_path="knowledge-base-doc", db_name=store_name)
 
-    llm = ChatOllama(temperature=0.1, model="gemma3:latest")
+    llm = ChatOllama(temperature=0.1, model="llama3.2")
 
 
     @tool(response_format="content_and_artifact")
@@ -29,7 +27,7 @@ if __name__ == '__main__':
         """Retrieve information related to a query."""
         retrieved_docs = vector_store.similarity_search(query, k=2)
         serialized = "\n\n".join(
-            (f"Source: {doc.metadata}\n" f"Content: {doc.page_content}")
+            f"Source: {doc.metadata}\n" f"Content: {doc.page_content}"
             for doc in retrieved_docs
         )
         return serialized, retrieved_docs
@@ -99,8 +97,8 @@ if __name__ == '__main__':
 
     graph = graph_builder.compile()
 
-    input_message = "Hello"
-
+    input_message = "Hello who is Patrick Colmant?"
+    print("--- Loading response ---")
     for step in graph.stream(
             {"messages": [{"role": "user", "content": input_message}]},
             stream_mode="values",

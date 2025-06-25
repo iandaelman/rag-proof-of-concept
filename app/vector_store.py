@@ -74,10 +74,11 @@ def build_vector_store(document_path=None, db_name=None):
 def init_vector_store(document_path="knowledge-base-doc", db_name="chroma_db_doc"):
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     persistent_directory = os.path.join(base_dir, "vector_db", db_name)
+    embeddings_function = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
     if not os.path.exists(persistent_directory):
         return build_vector_store(document_path=document_path, db_name=db_name)
     else:
         print("Vector store already exists. No need to initialize.")
         base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
         persistent_directory = os.path.join(base_dir, "vector_db", db_name)
-        return Chroma(persist_directory=persistent_directory)
+        return Chroma(persist_directory=persistent_directory, embedding_function=embeddings_function)
