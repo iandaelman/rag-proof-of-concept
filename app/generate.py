@@ -1,10 +1,26 @@
 from langchain_core.messages import SystemMessage
 from langchain_ollama import ChatOllama
 from langgraph.graph import MessagesState
+from langgraph.prebuilt import ToolNode
 
+from app.retriever import retrieve
+
+llm = ChatOllama(temperature=0.1, model="llama3.2")
+
+
+# Step 1: Generate an AIMessage that may include a tool-call to be sent.
+def query_or_respond(state: MessagesState):
+    """Generate tool call for retrieval or respond."""
+    llm_with_tools = llm.bind_tools([retrieve])
+    response = llm_with_tools.invoke(state["messages"])
+    # MessagesState appends messages to state instead of overwriting
+    return {"messages": [response]}
+
+# Step 2: Execute the retrieval.
+tools = ToolNode([retrieve])
 
 # Step 3: Generate a response using the retrieved content.
-def generate_tool_chain(state: MessagesState):
+def generate(state: MessagesState):
     """Generate answer."""
     # Get generated ToolMessages
     recent_tool_messages = []
@@ -34,7 +50,6 @@ def generate_tool_chain(state: MessagesState):
     ]
     prompt = [SystemMessage(system_message_content)] + conversation_messages
 
-    llm = ChatOllama(temperature=0.1, model="llama3.2")
     # Run
     response = llm.invoke(prompt)
     return {"messages": [response]}

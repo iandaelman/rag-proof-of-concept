@@ -3,8 +3,6 @@ import os
 from langchain_chroma import Chroma
 from langchain_core.tools import tool
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_ollama import ChatOllama
-from langgraph.graph import MessagesState
 
 from app.vector_store import init_vector_store
 
@@ -81,7 +79,7 @@ def test_different_retrieval_methods(store_name="chroma_db",
 
 
 @tool(response_format="content_and_artifact")
-def retrieve_tool_chain(query: str):
+def retrieve(query: str):
     """Retrieve information related to a query."""
     store_name = "chroma_db_doc"
     vector_store = init_vector_store(document_path="knowledge-base-doc", db_name=store_name)
@@ -92,13 +90,3 @@ def retrieve_tool_chain(query: str):
         for doc in retrieved_docs
     )
     return serialized, retrieved_docs
-
-
-# Step 1: Generate an AIMessage that may include a tool-call to be sent.
-def query_or_respond(state: MessagesState):
-    llm = ChatOllama(temperature=0.1, model="llama3.2")
-    """Generate tool call for retrieval or respond."""
-    llm_with_tools = llm.bind_tools([retrieve_tool_chain])
-    response = llm_with_tools.invoke(state["messages"])
-    # MessagesState appends messages to state instead of overwriting
-    return {"messages": [response]}
