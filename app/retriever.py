@@ -6,21 +6,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_ollama import ChatOllama
 from langgraph.graph import MessagesState
 
-from app import vector_store
-from app.utils.RetrievalMethod import RetrievalMethod
-from app.utils.State import State
 from app.vector_store import init_vector_store
-
-
-def retrieve(state: State):
-    print("\n--- Retrieving documents ---")
-    retrieved_docs = query_vector_store(state["persistent_directory"],
-                                        state["store_name"],
-                                        state["query"],
-                                        state["retrieval_method"].value,
-                                        state["search_kwargs"])
-    print("\n--- Retrieved documents ---")
-    return {"context": retrieved_docs}
 
 
 def query_vector_store(persistent_directory, store_name, query, search_type, search_kwargs):
@@ -98,8 +84,6 @@ def test_different_retrieval_methods(store_name="chroma_db",
 def retrieve_tool_chain(query: str):
     """Retrieve information related to a query."""
     store_name = "chroma_db_doc"
-    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
-    persistent_directory = os.path.join(base_dir, "vector_db", store_name)
     vector_store = init_vector_store(document_path="knowledge-base-doc", db_name=store_name)
 
     retrieved_docs = vector_store.similarity_search(query, k=2)

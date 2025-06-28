@@ -1,7 +1,6 @@
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
-from langchain_ollama import ChatOllama
 from langgraph.graph import END
 from langgraph.graph import StateGraph, MessagesState
 from langgraph.prebuilt import ToolNode
@@ -10,9 +9,10 @@ from langgraph.prebuilt import tools_condition
 from app.generate import generate_tool_chain
 from app.retriever import retrieve_tool_chain, query_or_respond
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
 
+# Press the green button in the gutter to run the script.
+
+def main():
     tools = ToolNode([retrieve_tool_chain])
     graph_builder = StateGraph(MessagesState)
     graph_builder.add_node(query_or_respond)
@@ -29,10 +29,20 @@ if __name__ == '__main__':
 
     graph = graph_builder.compile()
 
-    input_message = "Hello who is Patrick Colmant?"
-    print("--- Loading response ---")
-    for step in graph.stream(
-            {"messages": [{"role": "user", "content": input_message}]},
-            stream_mode="values",
-    ):
-        step["messages"][-1].pretty_print()
+    print("Welcome to the chat! Type 'exit' to end the conversation.")
+
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() == 'exit':
+            print("Goodbye!")
+            break
+
+        for step in graph.stream(
+                {"messages": [{"role": "user", "content": user_input}]},
+                stream_mode="values",
+        ):
+            step["messages"][-1].pretty_print()
+
+
+if __name__ == '__main__':
+    main()
