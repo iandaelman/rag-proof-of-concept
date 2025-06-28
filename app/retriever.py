@@ -3,7 +3,6 @@ import os
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 
-from app.utils.RetrievalMethod import RetrievalMethod
 from app.utils.State import State
 
 
