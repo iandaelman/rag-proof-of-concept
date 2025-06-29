@@ -1,10 +1,12 @@
 import glob
 import os
+
 from langchain_chroma import Chroma
 from langchain_community.document_loaders import (
     TextLoader,
     PyPDFLoader,
     UnstructuredWordDocumentLoader)
+from langchain_core.vectorstores import VectorStoreRetriever
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
@@ -65,15 +67,16 @@ def build_vector_store(document_path=None, db_name=None):
 
     # Create the vector store and persist it automatically
     print("\n--- Creating vector store ---")
-    Chroma.from_documents(
-        docs, embeddings_function, persist_directory=persistent_directory)
-    print("\n--- Finished creating vector store ---")
+    return Chroma.from_documents(
+        docs, embeddings_function, persist_directory=persistent_directory).as_retriever()
 
 
-def init_vector_store(document_path="knowledge-base-doc", db_name="chroma_db_doc"):
+def init_vector_store(document_path="knowledge-base-doc", db_name="chroma_db_doc") -> VectorStoreRetriever:
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     persistent_directory = os.path.join(base_dir, "vector_db", db_name)
     if not os.path.exists(persistent_directory):
-        build_vector_store(document_path=document_path, db_name=db_name)
+        return build_vector_store(document_path=document_path, db_name=db_name)
     else:
+        embeddings_function = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
         print("Vector store already exists. No need to initialize.")
+        return Chroma(persist_directory=persistent_directory, embedding_function=embeddings_function).as_retriever()

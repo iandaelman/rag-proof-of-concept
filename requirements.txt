@@ -18,3 +18,5 @@ pypdf
 typing_extensions
 langchain-text-splitters
 langgraph
+langchain_openai
+IPython

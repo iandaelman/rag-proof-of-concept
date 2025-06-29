@@ -1,22 +1,27 @@
-from langchain_core.prompts import ChatPromptTemplate
+from dotenv import load_dotenv
+from langchain.chat_models import init_chat_model
 from langchain_ollama import ChatOllama
+from langgraph.graph import MessagesState
 
-from app.utils.State import State
+load_dotenv()
+
+GENERATE_PROMPT = (
+    "You are an assistant for question-answering tasks. "
+    "Use the following pieces of retrieved context to answer the question. "
+    "If you don't know the answer, just say that you don't know. "
+    "Use three sentences maximum and keep the answer concise.\n"
+    "Question: {question} \n"
+    "Context: {context}"
+)
+
+# response_model = ChatOllama(model="granite3.3:8b", temperature=0)
+response_model = init_chat_model(model="openai:gpt-4o-mini", temperature=0)
 
 
-def generate(state: State):
-    print("\n--- Generating awnser ---")
-    docs_content = "\n\n".join(doc.page_content for doc in state["context"])
-    prompt_template = ChatPromptTemplate([
-        ("system", "You are an assistant for question-answering tasks."),
-        ("human", """Use the following pieces of retrieved context to answer the question. 
-        If you don't know the answer, just say that you don't know. 
-        Question: {query} 
-        Context: {context}
-        Please provide an answer based only on the provided context. If the answer is not found in the context, respond with 'I'm not sure'.""")])
-    print("\n--- Initializing LLM model ---")
-    model = ChatOllama(temperature=0.1, model=state["model_name"])
-    messages = prompt_template.invoke({"query": state["query"], "context": docs_content})
-    print(f"\n--- Invoking LLM model with {messages} ---")
-    response = model.invoke(messages)
-    return {"response": response}
+def generate_answer(state: MessagesState):
+    """Generate an answer."""
+    question = state["messages"][0].content
+    context = state["messages"][-1].content
+    prompt = GENERATE_PROMPT.format(question=question, context=context)
+    response = response_model.invoke([{"role": "user", "content": prompt}])
+    return {"messages": [response]}

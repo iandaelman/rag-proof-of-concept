@@ -1,35 +1,92 @@
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-import os
+from pprint import pprint
 
-from langgraph.constants import START
-from langgraph.graph import StateGraph
-from app.generate import generate
-from app.retriever import retrieve
-from app.utils.RetrievalMethod import RetrievalMethod
-from app.utils.State import State
+from IPython.display import Image, display
+from dotenv import load_dotenv
+from langchain.chat_models import init_chat_model
+from langchain_core.tools import create_retriever_tool
+from langchain_ollama import ChatOllama
+from langgraph.graph import MessagesState
+from langgraph.graph import StateGraph, START, END
+from langgraph.prebuilt import ToolNode
+from langgraph.prebuilt import tools_condition
+
+from app.GradeDocuments import grade_documents
+from app.generate import generate_answer
+from app.rewrite_question import rewrite_question
 from app.vector_store import init_vector_store
 
-# Press the green button in the gutter to run the script.
+load_dotenv()
+# response_model = ChatOllama(model="granite3.3:8b", temperature=0)
+response_model = init_chat_model(model="openai:gpt-4o-mini", temperature=0)
+retriever = init_vector_store()
+retriever_tool = create_retriever_tool(
+        retriever,
+        "myminfin_support_retriever",
+        "Search and return information about Myminfin support or contact information about ICT FOD Financiën."
+    )
+
+def generate_query_or_respond(state: MessagesState):
+    """Call the model to generate a response based on the current state. Given
+    the question, it will decide to retrieve using the retriever tool, or simply respond to the user.
+    """
+    response = (
+        response_model
+        .bind_tools([retriever_tool]).invoke(state["messages"])
+    )
+    return {"messages": [response]}
+
+
+def main():
+
+    workflow = StateGraph(MessagesState)
+
+    # Define the nodes we will cycle between
+    workflow.add_node(generate_query_or_respond)
+    workflow.add_node("retrieve", ToolNode([retriever_tool]))
+    workflow.add_node(rewrite_question)
+    workflow.add_node(generate_answer)
+
+    workflow.add_edge(START, "generate_query_or_respond")
+
+    # Decide whether to retrieve
+    workflow.add_conditional_edges(
+        "generate_query_or_respond",
+        # Assess LLM decision (call `retriever_tool` tool or respond to the user)
+        tools_condition,
+        {
+            # Translate the condition outputs to nodes in our graph
+            "tools": "retrieve",
+            END: END,
+        },
+    )
+
+    # Edges taken after the `action` node is called.
+    workflow.add_conditional_edges(
+        "retrieve",
+        # Assess agent decision
+        grade_documents,
+    )
+    workflow.add_edge("generate_answer", END)
+    workflow.add_edge("rewrite_question", "generate_query_or_respond")
+
+    # Compile
+    graph = workflow.compile()
+    for chunk in graph.stream(
+            {
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": "Wie is Patrick Colmant?",
+                    }
+                ]
+            }
+    ):
+        for node, update in chunk.items():
+            print("Update from node", node)
+            update["messages"][-1].pretty_print()
+            print("\n\n")
+
+
 if __name__ == '__main__':
-    graph_builder = StateGraph(State).add_sequence([retrieve, generate])
-    graph_builder.add_edge(START, "retrieve")
-    graph = graph_builder.compile()
-    store_name = "chroma_db_doc"
-    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
-    persistent_directory = os.path.join(base_dir, "vector_db", store_name)
-    query = "Wie is Patrick Colmant"
-    init_vector_store(document_path="knowledge-base-doc", db_name=store_name)
-    state = graph.invoke(
-        {"query": query,
-         "retrieval_method": RetrievalMethod.SIMILARITY_SEARCH,
-         "persistent_directory": persistent_directory,
-         "store_name": store_name,
-         "search_kwargs": {"k": 3},
-         "model_name": "llama3.2"
-         })
-    print(f"\n--- Received response ---")
-    print(state["response"])
-    print(f"\n--- Received content ---")
-    print(state["response"].content)
+    main()
 
