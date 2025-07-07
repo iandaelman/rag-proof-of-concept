@@ -20,3 +20,5 @@ langchain-text-splitters
 langgraph
 langchain_openai
 IPython
+pydantic
+sympy

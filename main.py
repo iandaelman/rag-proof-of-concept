@@ -10,6 +10,7 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode
 from langgraph.prebuilt import tools_condition
 
+from app.GenerateOrQuery import generate_query_or_respond
 from app.GradeDocuments import grade_documents
 from app.generate import generate_answer
 from app.rewrite_question import rewrite_question
@@ -20,43 +21,47 @@ load_dotenv()
 response_model = init_chat_model(model="openai:gpt-4o-mini", temperature=0)
 retriever = init_vector_store()
 retriever_tool = create_retriever_tool(
-        retriever,
-        "myminfin_support_retriever",
-        "Search and return information about Myminfin support or contact information about ICT FOD Financiën."
-    )
+    retriever,
+    "myminfin_support_retriever",
+    "Search and return information about Myminfin support or contact information about ICT FOD Financiën."
+)
 
-def generate_query_or_respond(state: MessagesState):
-    """Call the model to generate a response based on the current state. Given
+response_model.bind_tools([retriever_tool])
+
+
+def query_or_respond(state: MessagesState):
+    """
+    This methods will call the retriever tool when given a quetion about the MyMinfin support.
+    In the case of a trivial question it will simply provide a response
+    Call the model to generate a response based on the current state. Given
     the question, it will decide to retrieve using the retriever tool, or simply respond to the user.
     """
-    response = (
-        response_model
-        .bind_tools([retriever_tool]).invoke(state["messages"])
-    )
+    response = response_model.invoke(state["messages"])
+
     return {"messages": [response]}
 
 
 def main():
-
     workflow = StateGraph(MessagesState)
 
     # Define the nodes we will cycle between
-    workflow.add_node(generate_query_or_respond)
+    workflow.add_node(query_or_respond)
     workflow.add_node("retrieve", ToolNode([retriever_tool]))
     workflow.add_node(rewrite_question)
     workflow.add_node(generate_answer)
 
-    workflow.add_edge(START, "generate_query_or_respond")
+
+    workflow.add_edge(START, "query_or_respond")
 
     # Decide whether to retrieve
     workflow.add_conditional_edges(
-        "generate_query_or_respond",
+        "query_or_respond",
         # Assess LLM decision (call `retriever_tool` tool or respond to the user)
-        tools_condition,
+        generate_query_or_respond,
         {
             # Translate the condition outputs to nodes in our graph
-            "tools": "retrieve",
-            END: END,
+            "retrieve": "retrieve",
+            "END": END,
         },
     )
 
@@ -66,13 +71,13 @@ def main():
         # Assess agent decision
         grade_documents,
         {
-            "generate_answer":"generate_answer",
-            "rewrite_question":"rewrite_question"
+            "generate_answer": "generate_answer",
+            "rewrite_question": "rewrite_question"
         }
 
     )
     workflow.add_edge("generate_answer", END)
-    workflow.add_edge("rewrite_question", "generate_query_or_respond")
+    workflow.add_edge("rewrite_question", "query_or_respond")
 
     # Compile
     graph = workflow.compile()
@@ -95,4 +100,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
