@@ -65,12 +65,18 @@ def main():
         "retrieve",
         # Assess agent decision
         grade_documents,
+        {
+            "generate_answer":"generate_answer",
+            "rewrite_question":"rewrite_question"
+        }
+
     )
     workflow.add_edge("generate_answer", END)
     workflow.add_edge("rewrite_question", "generate_query_or_respond")
 
     # Compile
     graph = workflow.compile()
+
     for chunk in graph.stream(
             {
                 "messages": [
