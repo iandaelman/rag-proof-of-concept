@@ -26,7 +26,7 @@ retriever_tool = create_retriever_tool(
     "Search and return information about Myminfin support or contact information about ICT FOD Financiën."
 )
 
-response_model.bind_tools([retriever_tool])
+response_model_with_tools = response_model.bind_tools([retriever_tool])
 
 
 def query_or_respond(state: MessagesState):
@@ -36,7 +36,9 @@ def query_or_respond(state: MessagesState):
     Call the model to generate a response based on the current state. Given
     the question, it will decide to retrieve using the retriever tool, or simply respond to the user.
     """
-    response = response_model.invoke(state["messages"])
+    response = response_model_with_tools.invoke(state["messages"][-1:])
+
+    print("STATE" + state["messages"][-1].content)
 
     return {"messages": [response]}
 
@@ -46,10 +48,9 @@ def main():
 
     # Define the nodes we will cycle between
     workflow.add_node(query_or_respond)
-    workflow.add_node("retrieve", ToolNode([retriever_tool]))
+    workflow.add_node("tools", ToolNode([retriever_tool]))
     workflow.add_node(rewrite_question)
     workflow.add_node(generate_answer)
-
 
     workflow.add_edge(START, "query_or_respond")
 
@@ -57,17 +58,12 @@ def main():
     workflow.add_conditional_edges(
         "query_or_respond",
         # Assess LLM decision (call `retriever_tool` tool or respond to the user)
-        generate_query_or_respond,
-        {
-            # Translate the condition outputs to nodes in our graph
-            "retrieve": "retrieve",
-            "END": END,
-        },
+        tools_condition,
     )
 
     # Edges taken after the `action` node is called.
     workflow.add_conditional_edges(
-        "retrieve",
+        "tools",
         # Assess agent decision
         grade_documents,
         {
