@@ -20,6 +20,7 @@ load_dotenv()
 # response_model = ChatOllama(model="granite3.3:8b", temperature=0)
 response_model = init_chat_model(model="openai:gpt-4o-mini", temperature=0)
 retriever = init_vector_store()
+#TODO Vervangen door eigen retriever waar je meer controle over hebt
 retriever_tool = create_retriever_tool(
     retriever,
     "myminfin_support_retriever",
