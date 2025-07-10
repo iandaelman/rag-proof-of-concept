@@ -38,8 +38,6 @@ def query_or_respond(state: MessagesState):
     """
     response = response_model_with_tools.invoke(state["messages"][-1:])
 
-    print("STATE" + state["messages"][-1].content)
-
     return {"messages": [response]}
 
 
