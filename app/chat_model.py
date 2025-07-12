@@ -4,12 +4,14 @@ from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 
 load_dotenv()
 
+response_model_name = "llama3.2"
 
 def get_evaluation_model():
-    return ChatOllama(model="gemma3n:e4b", temperature=0)
+    #return ChatOllama(model="gemma3n:e4b")
+    return ChatOpenAI(model="gpt-4o-mini")
 
 def get_response_model():
-    return ChatOllama(model="llama3.2", temperature=0)
+    return ChatOllama(model=response_model_name, temperature=0)
     #return ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
 

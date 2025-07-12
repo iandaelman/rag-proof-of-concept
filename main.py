@@ -8,8 +8,10 @@ from langgraph.prebuilt import tools_condition
 
 from app.GradeDocuments import grade_documents
 from app.chat_model import get_response_model
+from app.evalutation import evaluate_answers
 from app.generate import generate_answer
 from app.rewrite_question import rewrite_question
+from app.test_data import ragas_data_set
 from app.vector_store import init_vector_store
 
 load_dotenv()
@@ -76,14 +78,16 @@ def main():
     # user_input = input("Wat is uw vraag? ")
     # input_message = HumanMessage(content=user_input)
 
-    input_message = HumanMessage(content="Wie is de product owner van AGDP?")
+    for question in ragas_data_set["user_input"]:
+        print("Processing question:", question)
+        input_message = HumanMessage(content=question)
+        for chunk in graph.stream({"messages": [input_message]}, stream_mode="updates"):
+            for node, update in chunk.items():
+                print("Update from node", node)
+                update["messages"][-1].pretty_print()
+                print("\n\n")
 
-    for chunk in graph.stream({"messages": [input_message]}, stream_mode="updates"):
-        for node, update in chunk.items():
-            print("Update from node", node)
-            update["messages"][-1].pretty_print()
-            print("\n\n")
-
+    evaluate_answers()
 
 if __name__ == '__main__':
     main()
