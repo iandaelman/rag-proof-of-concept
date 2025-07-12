@@ -194,4 +194,5 @@ knowledge-base/**
 # But allow the folder itself to be tracked
 knowledge-base-doc/
 knowledge-base-pdf/
+knowledge-base-md/
 /chroma_knowledge_base_db/

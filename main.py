@@ -1,35 +1,89 @@
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-import os
+from dotenv import load_dotenv
+from langchain_core.messages import HumanMessage
+from langchain_core.tools import create_retriever_tool
+from langgraph.graph import MessagesState
+from langgraph.graph import StateGraph, START, END
+from langgraph.prebuilt import ToolNode
+from langgraph.prebuilt import tools_condition
 
-from langgraph.constants import START
-from langgraph.graph import StateGraph
-from app.generate import generate
-from app.retriever import retrieve
-from app.utils.RetrievalMethod import RetrievalMethod
-from app.utils.State import State
+from app.GradeDocuments import grade_documents
+from app.chat_model import get_response_model
+from app.generate import generate_answer
+from app.rewrite_question import rewrite_question
 from app.vector_store import init_vector_store
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    graph_builder = StateGraph(State).add_sequence([retrieve, generate])
-    graph_builder.add_edge(START, "retrieve")
-    graph = graph_builder.compile()
-    store_name = "chroma_db_doc"
-    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__)))
-    persistent_directory = os.path.join(base_dir, "vector_db", store_name)
-    query = "Wie is Patrick Colmant"
-    init_vector_store(document_path="knowledge-base-doc", db_name=store_name)
-    state = graph.invoke(
-        {"query": query,
-         "retrieval_method": RetrievalMethod.SIMILARITY_SEARCH,
-         "persistent_directory": persistent_directory,
-         "store_name": store_name,
-         "search_kwargs": {"k": 3},
-         "model_name": "llama3.2"
-         })
-    print(f"\n--- Received response ---")
-    print(state["response"])
-    print(f"\n--- Received content ---")
-    print(state["response"].content)
+load_dotenv()
+response_model = get_response_model()
+retriever = init_vector_store()
+# TODO Vervangen door eigen retriever waar je meer controle over hebt
+retriever_tool = create_retriever_tool(
+    retriever,
+    "myminfin_support_retriever",
+    "Search and return information about Myminfin support or contact information about ICT FOD Financiën."
+)
 
+response_model_with_tools = response_model.bind_tools([retriever_tool])
+
+
+def query_or_respond(state: MessagesState):
+    """
+    This methods will call the retriever tool when given a quetion about the MyMinfin support.
+    In the case of a trivial question it will simply provide a response
+    Call the model to generate a response based on the current state. Given
+    the question, it will decide to retrieve using the retriever tool, or simply respond to the user.
+    """
+    response = response_model_with_tools.invoke(state["messages"][-1:])
+
+    return {"messages": [response]}
+
+
+def main():
+    # TODO create seperate states for the when the llm is stuck in a loop and maybe for treating the translations have been done
+    workflow = StateGraph(MessagesState)
+
+    # Define the nodes we will cycle between
+    workflow.add_node(query_or_respond)
+    workflow.add_node("tools", ToolNode([retriever_tool]))
+    workflow.add_node(rewrite_question)
+    workflow.add_node(generate_answer)
+
+    workflow.add_edge(START, "query_or_respond")
+
+    # Decide whether to retrieve
+    workflow.add_conditional_edges(
+        "query_or_respond",
+        # Assess LLM decision (call `retriever_tool` tool or respond to the user)
+        tools_condition,
+    )
+
+    # Edges taken after the `action` node is called.
+    workflow.add_conditional_edges(
+        "tools",
+        # Assess agent decision
+        grade_documents,
+        {
+            "generate_answer": "generate_answer",
+            "rewrite_question": "rewrite_question"
+        }
+
+    )
+    workflow.add_edge("generate_answer", END)
+    workflow.add_edge("rewrite_question", "query_or_respond")
+
+    # Compile
+    graph = workflow.compile()
+
+    # user_input = input("Wat is uw vraag? ")
+    # input_message = HumanMessage(content=user_input)
+
+    input_message = HumanMessage(content="Wie is de product owner van AGDP?")
+
+    for chunk in graph.stream({"messages": [input_message]}, stream_mode="updates"):
+        for node, update in chunk.items():
+            print("Update from node", node)
+            update["messages"][-1].pretty_print()
+            print("\n\n")
+
+
+if __name__ == '__main__':
+    main()
