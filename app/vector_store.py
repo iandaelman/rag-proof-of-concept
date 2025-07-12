@@ -43,7 +43,7 @@ def build_vector_store(embeddings_function, document_path, db_name):
                     print(doc_file_path)
                     try:
                         # Use the appropriate loader based on the file extension
-                        loader = loader_cls(doc_file_path)
+                        loader = loader_cls(doc_file_path,encoding="utf-8")
                         doc = loader.load()
                         for d in doc:
                             d.metadata = {"source": doc_file_path, "folder": folder}
@@ -67,7 +67,7 @@ def build_vector_store(embeddings_function, document_path, db_name):
         docs, embeddings_function, persist_directory=persistent_directory).as_retriever()
 
 
-def init_vector_store(document_path="knowledge-base-doc", db_name="chroma_db_doc") -> VectorStoreRetriever:
+def init_vector_store(document_path="knowledge-base-md", db_name="chroma_db_md") -> VectorStoreRetriever:
     embeddings_function = get_embedding()
     embedding_name = embeddings_function.__class__.__name__
 
