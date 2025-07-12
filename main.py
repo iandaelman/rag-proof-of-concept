@@ -14,7 +14,6 @@ from app.vector_store import init_vector_store
 
 load_dotenv()
 response_model = get_response_model()
-#response_model = get_open_ai_model()
 retriever = init_vector_store()
 # TODO Vervangen door eigen retriever waar je meer controle over hebt
 retriever_tool = create_retriever_tool(
@@ -77,7 +76,7 @@ def main():
     # user_input = input("Wat is uw vraag? ")
     # input_message = HumanMessage(content=user_input)
 
-    input_message = HumanMessage(content="Kan je me de contactgegevens van Patrick Colmant geven?")
+    input_message = HumanMessage(content="Wie is de product owner van AGDP?")
 
     for chunk in graph.stream({"messages": [input_message]}, stream_mode="updates"):
         for node, update in chunk.items():

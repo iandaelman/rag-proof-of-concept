@@ -36,7 +36,6 @@ def grade_documents(
     context = state["messages"][-1].content
 
     prompt = GRADE_PROMPT.format(question=question, context=context)
-    print("Grade Documents prompt: " + prompt)
     response = (
         grader_model
         .with_structured_output(GradeDocuments).invoke(
