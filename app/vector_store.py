@@ -7,8 +7,9 @@ from langchain_community.document_loaders import (
     PyPDFLoader,
     UnstructuredWordDocumentLoader)
 from langchain_core.vectorstores import VectorStoreRetriever
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+from app.chat_model import get_embedding
 
 
 def add_metadata(doc, doc_type):
@@ -16,7 +17,7 @@ def add_metadata(doc, doc_type):
     return doc
 
 
-def build_vector_store(document_path=None, db_name=None):
+def build_vector_store(embeddings_function, document_path, db_name):
     # Define the directory containing the text file and the persistent directory
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     persistent_directory = os.path.join(base_dir, "vector_db", db_name)
@@ -58,25 +59,38 @@ def build_vector_store(document_path=None, db_name=None):
     # Display information about the split documents
     print("\n--- Document Chunks Information ---")
     print(f"Number of document chunks: {len(docs)}")
-    for doc in docs:
-        print(f"Sample chunk:\n{doc.page_content}\n")
-
-    print("\n--- Creating embeddings ---")
-    embeddings_function = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    print("\n--- Finished creating embeddings ---")
 
     # Create the vector store and persist it automatically
     print("\n--- Creating vector store ---")
+
     return Chroma.from_documents(
         docs, embeddings_function, persist_directory=persistent_directory).as_retriever()
 
 
 def init_vector_store(document_path="knowledge-base-doc", db_name="chroma_db_doc") -> VectorStoreRetriever:
+    embeddings_function = get_embedding()
+    embedding_name = embeddings_function.__class__.__name__
+
+    # Clean embedding name (e.g., Ollama)
+    embedding_name_clean = embedding_name.replace("Embeddings", "")
+    print("Embedding model being used:", embedding_name_clean)
+
+    # Combine db_name with embedding name
+    full_db_name = f"{db_name}_{embedding_name_clean}"
+
+    # Construct the full persistent directory path
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    persistent_directory = os.path.join(base_dir, "vector_db", db_name)
+    persistent_directory = os.path.join(base_dir, "vector_db", full_db_name)
+
     if not os.path.exists(persistent_directory):
-        return build_vector_store(document_path=document_path, db_name=db_name)
+        return build_vector_store(
+            embeddings_function=embeddings_function,
+            document_path=document_path,
+            db_name=full_db_name
+        )
     else:
-        embeddings_function = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
         print("Vector store already exists. No need to initialize.")
-        return Chroma(persist_directory=persistent_directory, embedding_function=embeddings_function).as_retriever()
+        return Chroma(
+            persist_directory=persistent_directory,
+            embedding_function=embeddings_function
+        ).as_retriever()

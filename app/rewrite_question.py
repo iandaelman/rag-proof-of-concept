@@ -2,6 +2,8 @@ from langchain.chat_models import init_chat_model
 from langchain_ollama import ChatOllama
 from langgraph.graph import MessagesState
 
+from app.chat_model import get_response_model
+
 REWRITE_PROMPT = (
     "Look at the input and try to reason about the underlying semantic intent / meaning.\n"
     "Here is the initial question:"
@@ -12,9 +14,7 @@ REWRITE_PROMPT = (
     "If the question is written in French rewrite it to English only return the rewritten question nothing else:"
 )
 
-# response_model = ChatOllama(model="granite3.3:8b", temperature=0)
-response_model = init_chat_model(model="openai:gpt-4o-mini", temperature=0)
-
+response_model = get_response_model()
 
 def rewrite_question(state: MessagesState):
     """Rewrite the original user question.

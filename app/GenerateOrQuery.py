@@ -1,14 +1,14 @@
-from dataclasses import Field
+from typing import Literal
 
 from dotenv import load_dotenv
-from langchain.chat_models import init_chat_model
 from langgraph.graph import MessagesState
 from pydantic import BaseModel, Field
-from typing import Literal
+
+from app.chat_model import get_response_model
 
 load_dotenv()
 
-response_model = init_chat_model(model="openai:gpt-4o-mini", temperature=0)
+response_model = get_response_model()
 
 QUERY_OR_RESPOND_PROMPT = """
 This method decides whether to call the retriever tool or respond directly.

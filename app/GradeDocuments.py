@@ -1,10 +1,10 @@
 from typing import Literal
 
 from dotenv import load_dotenv
-from langchain.chat_models import init_chat_model
-from langchain_ollama import ChatOllama
 from langgraph.graph import MessagesState
 from pydantic import BaseModel, Field
+
+from app.chat_model import get_response_model
 
 load_dotenv()
 
@@ -25,8 +25,7 @@ class GradeDocuments(BaseModel):
     )
 
 
-# response_model = ChatOllama(model="granite3.3:8b", temperature=0)
-grader_model = init_chat_model(model="openai:gpt-4o-mini", temperature=0)
+grader_model = get_response_model()
 
 
 def grade_documents(
@@ -37,6 +36,7 @@ def grade_documents(
     context = state["messages"][-1].content
 
     prompt = GRADE_PROMPT.format(question=question, context=context)
+    print("Grade Documents prompt: " + prompt)
     response = (
         grader_model
         .with_structured_output(GradeDocuments).invoke(

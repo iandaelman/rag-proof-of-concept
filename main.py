@@ -1,26 +1,22 @@
-from pprint import pprint
-
-from IPython.display import Image, display
 from dotenv import load_dotenv
-from langchain.chat_models import init_chat_model
+from langchain_core.messages import HumanMessage
 from langchain_core.tools import create_retriever_tool
-from langchain_ollama import ChatOllama
 from langgraph.graph import MessagesState
 from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode
 from langgraph.prebuilt import tools_condition
 
-from app.GenerateOrQuery import generate_query_or_respond
 from app.GradeDocuments import grade_documents
+from app.chat_model import get_response_model
 from app.generate import generate_answer
 from app.rewrite_question import rewrite_question
 from app.vector_store import init_vector_store
 
 load_dotenv()
-# response_model = ChatOllama(model="granite3.3:8b", temperature=0)
-response_model = init_chat_model(model="openai:gpt-4o-mini", temperature=0)
+response_model = get_response_model()
+#response_model = get_open_ai_model()
 retriever = init_vector_store()
-#TODO Vervangen door eigen retriever waar je meer controle over hebt
+# TODO Vervangen door eigen retriever waar je meer controle over hebt
 retriever_tool = create_retriever_tool(
     retriever,
     "myminfin_support_retriever",
@@ -43,6 +39,7 @@ def query_or_respond(state: MessagesState):
 
 
 def main():
+    # TODO create seperate states for the when the llm is stuck in a loop and maybe for treating the translations have been done
     workflow = StateGraph(MessagesState)
 
     # Define the nodes we will cycle between
@@ -77,16 +74,12 @@ def main():
     # Compile
     graph = workflow.compile()
 
-    for chunk in graph.stream(
-            {
-                "messages": [
-                    {
-                        "role": "user",
-                        "content": "Wie is Patrick Colmant?",
-                    }
-                ]
-            }
-    ):
+    # user_input = input("Wat is uw vraag? ")
+    # input_message = HumanMessage(content=user_input)
+
+    input_message = HumanMessage(content="Kan je me de contactgegevens van Patrick Colmant geven?")
+
+    for chunk in graph.stream({"messages": [input_message]}, stream_mode="updates"):
         for node, update in chunk.items():
             print("Update from node", node)
             update["messages"][-1].pretty_print()
