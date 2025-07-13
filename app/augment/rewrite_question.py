@@ -1,8 +1,6 @@
-from langchain.chat_models import init_chat_model
-from langchain_ollama import ChatOllama
 from langgraph.graph import MessagesState
 
-from app.chat_model import get_response_model
+from app.utils.configuration import get_response_model
 
 REWRITE_PROMPT = (
     "Look at the input and try to reason about the underlying semantic intent / meaning.\n"

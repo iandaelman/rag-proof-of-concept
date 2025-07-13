@@ -1,42 +1,28 @@
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage
-from langchain_core.tools import create_retriever_tool
 from langgraph.graph import MessagesState
 from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode
 from langgraph.prebuilt import tools_condition
 
-from app.GradeDocuments import grade_documents
-from app.chat_model import get_response_model
-from app.evalutation import evaluate_answers
-from app.generate import generate_answer
-from app.rewrite_question import rewrite_question
+from app.generation.GenerateOrQuery import generate_query_or_respond
+from app.augment.GradeDocuments import grade_documents
+from app.augment.evalutation import evaluate_answers
+from app.generation.generate import generate_answer
+from app.retrieve.retriever import retriever_tool
+from app.augment.rewrite_question import rewrite_question
 from app.test_data import ragas_data_set
-from app.vector_store import init_vector_store
 
 load_dotenv()
-response_model = get_response_model()
-retriever = init_vector_store()
+# response_model = get_response_model()
+
 # TODO Vervangen door eigen retriever waar je meer controle over hebt
-retriever_tool = create_retriever_tool(
-    retriever,
-    "myminfin_support_retriever",
-    "Search and return information about Myminfin support or contact information about ICT FOD Financiën."
-)
-
-response_model_with_tools = response_model.bind_tools([retriever_tool])
 
 
-def query_or_respond(state: MessagesState):
-    """
-    This methods will call the retriever tool when given a quetion about the MyMinfin support.
-    In the case of a trivial question it will simply provide a response
-    Call the model to generate a response based on the current state. Given
-    the question, it will decide to retrieve using the retriever tool, or simply respond to the user.
-    """
-    response = response_model_with_tools.invoke(state["messages"][-1:])
+# response_model_with_tools = response_model.bind_tools([retriever_tool])
+#
+#
 
-    return {"messages": [response]}
 
 
 def main():
@@ -44,18 +30,18 @@ def main():
     workflow = StateGraph(MessagesState)
 
     # Define the nodes we will cycle between
-    workflow.add_node(query_or_respond)
+    workflow.add_node("generate_query_or_respond", generate_query_or_respond)
     workflow.add_node("tools", ToolNode([retriever_tool]))
     workflow.add_node(rewrite_question)
     workflow.add_node(generate_answer)
 
-    workflow.add_edge(START, "query_or_respond")
+    workflow.add_edge(START, "generate_query_or_respond")
 
     # Decide whether to retrieve
     workflow.add_conditional_edges(
-        "query_or_respond",
+        "generate_query_or_respond",
         # Assess LLM decision (call `retriever_tool` tool or respond to the user)
-        tools_condition,
+        tools_condition
     )
 
     # Edges taken after the `action` node is called.
@@ -70,7 +56,7 @@ def main():
 
     )
     workflow.add_edge("generate_answer", END)
-    workflow.add_edge("rewrite_question", "query_or_respond")
+    workflow.add_edge("rewrite_question", "generate_query_or_respond")
 
     # Compile
     graph = workflow.compile()
@@ -88,6 +74,7 @@ def main():
                 print("\n\n")
 
     evaluate_answers()
+
 
 if __name__ == '__main__':
     main()

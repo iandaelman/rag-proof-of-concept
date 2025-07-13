@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from langgraph.graph import MessagesState
 
-from app.chat_model import get_response_model
+from app.utils.configuration import get_response_model
 from app.test_data import ragas_data_set
 
 load_dotenv()
@@ -11,7 +11,7 @@ GENERATE_PROMPT = (
     "Use the following pieces of retrieved context to answer the question. "
     "If you don't know the answer, just say that you don't know. "
     "Always answer in the language this question: {question} is asked no matter the language of the context provided. "
-    "Use three sentences maximum and keep the answer concise.\n"
+    "Give all relevant information"
     "Question: {question} \n"
     "Context: {context}"
 )
@@ -36,7 +36,7 @@ def evaluate_answer(question: str, context: str, answer: str):
             ragas_data_set[key].append("")
 
     # Set context and answer at the correct index
-    ragas_data_set["retrieved_contexts"][question_index] = [context]
-    ragas_data_set["answer"][question_index] = answer
+    ragas_data_set["retrieved_contexts"][question_index] = context
+    ragas_data_set["answer"][question_index] = answer if answer is not None else ""
 
 

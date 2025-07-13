@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from langgraph.graph import MessagesState
 from pydantic import BaseModel, Field
 
-from app.chat_model import get_response_model
+from app.utils.configuration import get_response_model
 
 load_dotenv()
 

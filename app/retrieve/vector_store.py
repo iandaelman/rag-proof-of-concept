@@ -9,7 +9,8 @@ from langchain_community.document_loaders import (
 from langchain_core.vectorstores import VectorStoreRetriever
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from app.chat_model import get_embedding
+from app.utils.configuration import get_embedding, get_retrieve_config, response_model_name
+from app.utils.RetrievalMethod import RetrievalMethod
 
 
 def add_metadata(doc, doc_type):
@@ -17,7 +18,7 @@ def add_metadata(doc, doc_type):
     return doc
 
 
-def build_vector_store(embeddings_function, document_path, db_name):
+def build_vector_store(embeddings_function, document_path, db_name, search_type, search_kwargs):
     # Define the directory containing the text file and the persistent directory
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     persistent_directory = os.path.join(base_dir, "vector_db", db_name)
@@ -43,7 +44,7 @@ def build_vector_store(embeddings_function, document_path, db_name):
                     print(doc_file_path)
                     try:
                         # Use the appropriate loader based on the file extension
-                        loader = loader_cls(doc_file_path,encoding="utf-8")
+                        loader = loader_cls(doc_file_path, encoding="utf-8")
                         doc = loader.load()
                         for d in doc:
                             d.metadata = {"source": doc_file_path, "folder": folder}
@@ -53,7 +54,7 @@ def build_vector_store(embeddings_function, document_path, db_name):
                         print(f"Failed to load file {doc_file_path}: {e}")
 
         # Split the document into chunks
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=5000, chunk_overlap=500)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
     docs = text_splitter.split_documents(documents)
 
     # Display information about the split documents
@@ -67,26 +68,32 @@ def build_vector_store(embeddings_function, document_path, db_name):
         docs, embeddings_function, persist_directory=persistent_directory).as_retriever()
 
 
-def init_vector_store(document_path="knowledge-base-md", db_name="chroma_db_md") -> VectorStoreRetriever:
+
+
+
+def init_vector_store(retrieval_method: RetrievalMethod, document_path="knowledge-base-md",
+                      db_name="chroma_db_md") -> VectorStoreRetriever:
+    search_type, search_kwargs = get_retrieve_config(retrieval_method)
+
     embeddings_function = get_embedding()
     embedding_name = embeddings_function.__class__.__name__
 
-    # Clean embedding name (e.g., Ollama)
     embedding_name_clean = embedding_name.replace("Embeddings", "")
     print("Embedding model being used:", embedding_name_clean)
+    print("Response model being used:", response_model_name)
 
-    # Combine db_name with embedding name
     full_db_name = f"{db_name}_{embedding_name_clean}"
 
-    # Construct the full persistent directory path
-    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
     persistent_directory = os.path.join(base_dir, "vector_db", full_db_name)
 
     if not os.path.exists(persistent_directory):
         return build_vector_store(
             embeddings_function=embeddings_function,
             document_path=document_path,
-            db_name=full_db_name
+            db_name=full_db_name,
+            search_type=search_type,
+            search_kwargs=search_kwargs
         )
     else:
         print("Vector store already exists. No need to initialize.")
