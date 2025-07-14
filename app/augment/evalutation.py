@@ -1,6 +1,6 @@
 from datasets import Dataset
 from ragas import RunConfig, evaluate
-from ragas.metrics import LLMContextRecall, Faithfulness, FactualCorrectness
+from ragas.metrics import LLMContextRecall, Faithfulness, FactualCorrectness, AnswerCorrectness, AnswerAccuracy
 
 from app.utils.configuration import get_evaluation_model, response_model_name
 from app.test_data import ragas_data_set
@@ -10,7 +10,10 @@ def evaluate_answers():
     normalize_contexts(ragas_data_set)
     dataset = Dataset.from_dict(ragas_data_set)
     my_run_config = RunConfig(max_workers=64, timeout=6000)
-    score = evaluate(dataset, metrics=[LLMContextRecall(), Faithfulness(), FactualCorrectness()],
+    score = evaluate(dataset, metrics=[Faithfulness(),
+                                       FactualCorrectness(),
+                                       AnswerCorrectness(),
+                                       AnswerAccuracy()],
                      llm=get_evaluation_model(), run_config=my_run_config)
 
     df = score.to_pandas()
