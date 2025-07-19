@@ -1,6 +1,6 @@
 import streamlit as st
 from dotenv import load_dotenv
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import HumanMessage, AIMessage
 from langgraph.graph import MessagesState, StateGraph, START, END
 from langgraph.prebuilt import ToolNode, tools_condition
 
@@ -21,18 +21,11 @@ def build_graph():
     workflow.add_node(generate_answer)
 
     workflow.add_edge(START, "generate_query_or_respond")
-    workflow.add_conditional_edges(
-        "generate_query_or_respond",
-        tools_condition
-    )
-    workflow.add_conditional_edges(
-        "tools",
-        grade_documents,
-        {
-            "generate_answer": "generate_answer",
-            "rewrite_question": "rewrite_question"
-        }
-    )
+    workflow.add_conditional_edges("generate_query_or_respond", tools_condition)
+    workflow.add_conditional_edges("tools", grade_documents, {
+        "generate_answer": "generate_answer",
+        "rewrite_question": "rewrite_question"
+    })
     workflow.add_edge("generate_answer", END)
     workflow.add_edge("rewrite_question", "generate_query_or_respond")
 
@@ -40,21 +33,40 @@ def build_graph():
 
 graph = build_graph()
 
-st.title("📚 Mijn AI Agent Interface")
+st.set_page_config(page_title="Myminfin Support bot", page_icon="🤖")
+st.title("Myminfin Support bot")
 
-user_input = st.text_input("💬 Wat is je vraag?")
+# Initieer chatgeschiedenis
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
 
-if st.button("🚀 Verstuur vraag"):
-    if user_input.strip():
-        st.info("⏳ Verwerken...")
-        input_message = HumanMessage(content=user_input)
-        message_list = [input_message]
+# Toon eerdere berichten
+for msg in st.session_state.chat_history:
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
 
-        for chunk in graph.stream({"messages": message_list}, stream_mode="updates"):
-            for node, update in chunk.items():
-                st.markdown(f"**📍 Node update: `{node}`**")
-                for msg in update["messages"]:
-                    st.write(msg.content)
-    else:
-        st.warning("Voer een geldige vraag in.")
+# Input via chat
+prompt = st.chat_input("Typ je vraag...")
 
+if prompt:
+    # Voeg uservraag toe
+    st.session_state.chat_history.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    with st.chat_message("assistant"):
+        with st.spinner("Generatin answer..."):
+            input_message = HumanMessage(content=prompt)
+            message_list = [input_message]
+
+            try:
+                output = ""
+                for chunk in graph.stream({"messages": message_list}, stream_mode="updates"):
+                    for update in chunk.values():
+                        for msg in update["messages"]:
+                            if isinstance(msg, AIMessage):
+                                output += msg.content + "\n"
+                st.markdown(output.strip())
+                st.session_state.chat_history.append({"role": "assistant", "content": output.strip()})
+            except Exception as e:
+                st.error(f"Er ging iets mis: {e}")
