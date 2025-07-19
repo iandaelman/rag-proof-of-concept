@@ -14,7 +14,7 @@ REWRITE_PROMPT = (
 
 response_model = get_response_model()
 
-def rewrite_question(state: MessagesState):
+def rewrite_question(state: MessagesState)-> MessagesState:
     """Rewrite the original user question.
     If the question is in dutch rewrite and translate the question to french.
     If the question is in french rewrite and translate it to English
@@ -23,4 +23,4 @@ def rewrite_question(state: MessagesState):
     question = messages[0].content
     prompt = REWRITE_PROMPT.format(question=question)
     response = response_model.invoke([{"role": "user", "content": prompt}])
-    return {"messages": [response]}
+    return MessagesState(messages=[response])

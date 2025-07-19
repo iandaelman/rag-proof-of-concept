@@ -14,16 +14,6 @@ from app.augment.rewrite_question import rewrite_question
 from app.test_data import ragas_data_set
 
 load_dotenv()
-# response_model = get_response_model()
-
-# TODO Vervangen door eigen retriever waar je meer controle over hebt
-
-
-# response_model_with_tools = response_model.bind_tools([retriever_tool])
-#
-#
-
-
 
 def main():
     # TODO create seperate states for the when the llm is stuck in a loop and maybe for treating the translations have been done

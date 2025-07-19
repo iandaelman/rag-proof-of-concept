@@ -19,14 +19,14 @@ GENERATE_PROMPT = (
 response_model = get_response_model()
 
 
-def generate_answer(state: MessagesState):
+def generate_answer(state: MessagesState) -> MessagesState:
     """Generate an answer."""
     question = state["messages"][0].content
     context = state["messages"][-1].content
     prompt = GENERATE_PROMPT.format(question=question, context=context)
     response = response_model.invoke([{"role": "user", "content": prompt}])
     evaluate_answer(question, context, response.content)
-    return {"messages": [response]}
+    return MessagesState(messages=[response])
 
 
 def evaluate_answer(question: str, context: str, answer: str):
@@ -38,5 +38,3 @@ def evaluate_answer(question: str, context: str, answer: str):
     # Set context and answer at the correct index
     ragas_data_set["retrieved_contexts"][question_index] = context
     ragas_data_set["answer"][question_index] = answer if answer is not None else ""
-
-
