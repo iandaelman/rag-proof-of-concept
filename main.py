@@ -5,11 +5,11 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode
 from langgraph.prebuilt import tools_condition
 
-from app.augment.GradeDocuments import grade_documents
+from app.augment.grade_documents import grade_documents_with_evaluation
 from app.augment.evalutation import evaluate_answers
 from app.augment.rewrite_question import rewrite_question
-from app.generation.GenerateOrQuery import generate_query_or_respond
 from app.generation.generate import generate_answer_with_evaluation
+from app.retrieve.generate_or_query import generate_query_or_respond
 from app.retrieve.retriever import retriever_tool
 from app.test_data import ragas_data_set
 
@@ -38,7 +38,7 @@ def main():
     workflow.add_conditional_edges(
         "tools",
         # Assess agent decision
-        grade_documents,
+        grade_documents_with_evaluation,
         {
             "generate_answer_with_evaluation": "generate_answer_with_evaluation",
             "rewrite_question": "rewrite_question"

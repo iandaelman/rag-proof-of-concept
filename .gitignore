@@ -169,7 +169,7 @@ model_cache/
 /.DS_Store
 
 # Ignore Chroma vector database
-vector_db/
+resources/vector_db/
 products_vectorstore/
 
 # ignore gradio private files
@@ -192,7 +192,7 @@ scraper_cache/
 knowledge-base/**
 
 # But allow the folder itself to be tracked
-knowledge-base-doc/
-knowledge-base-pdf/
-knowledge-base-md/
+resources/knowledge-base-doc/
+resources/knowledge-base-pdf/
+resources/knowledge-base-md/
 /chroma_knowledge_base_db/

@@ -48,3 +48,25 @@ def grade_documents(
         return "generate_answer"
     else:
         return "rewrite_question"
+
+
+def grade_documents_with_evaluation(
+        state: MessagesState,
+) -> Literal["generate_answer_with_evaluation", "rewrite_question"]:
+    """Determine whether the retrieved documents are relevant to the question."""
+    question = state["messages"][0].content
+    context = state["messages"][-1].content
+
+    prompt = GRADE_PROMPT.format(question=question, context=context)
+    response = (
+        grader_model
+        .with_structured_output(GradeDocuments).invoke(
+            [{"role": "user", "content": prompt}]
+        )
+    )
+    score = response.binary_score
+
+    if score == "yes":
+        return "generate_answer_with_evaluation"
+    else:
+        return "rewrite_question"

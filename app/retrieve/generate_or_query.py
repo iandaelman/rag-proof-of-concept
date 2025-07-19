@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.messages import SystemMessage
 from langgraph.graph import MessagesState
 
 from app.retrieve.retriever import retriever_tool

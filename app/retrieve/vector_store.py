@@ -19,9 +19,10 @@ def add_metadata(doc, doc_type):
 
 
 def build_vector_store(embeddings_function, document_path, db_name, search_type, search_kwargs):
-    # Define the directory containing the text file and the persistent directory
-    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../resources"))
+    print(base_dir)
     persistent_directory = os.path.join(base_dir, "vector_db", db_name)
+    print(persistent_directory)
     loader_mapping = {
         ".md": TextLoader,
         ".txt": TextLoader,
@@ -54,7 +55,7 @@ def build_vector_store(embeddings_function, document_path, db_name, search_type,
                         print(f"Failed to load file {doc_file_path}: {e}")
 
         # Split the document into chunks
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1250, chunk_overlap=250)
     docs = text_splitter.split_documents(documents)
 
     # Display information about the split documents
@@ -65,10 +66,8 @@ def build_vector_store(embeddings_function, document_path, db_name, search_type,
     print("\n--- Creating vector store ---")
 
     return Chroma.from_documents(
-        docs, embeddings_function, persist_directory=persistent_directory).as_retriever()
-
-
-
+        docs, embeddings_function, persist_directory=persistent_directory).as_retriever(search_type=search_type,
+                                                                                        search_kwargs=search_kwargs)
 
 
 def init_vector_store(retrieval_method: RetrievalMethod, document_path="knowledge-base-md",
@@ -84,8 +83,9 @@ def init_vector_store(retrieval_method: RetrievalMethod, document_path="knowledg
 
     full_db_name = f"{db_name}_{embedding_name_clean}"
 
-    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../resources"))
     persistent_directory = os.path.join(base_dir, "vector_db", full_db_name)
+    document_path = os.path.join(base_dir, document_path)
 
     if not os.path.exists(persistent_directory):
         return build_vector_store(
@@ -100,4 +100,5 @@ def init_vector_store(retrieval_method: RetrievalMethod, document_path="knowledg
         return Chroma(
             persist_directory=persistent_directory,
             embedding_function=embeddings_function
-        ).as_retriever()
+        ).as_retriever(search_type=search_type,
+                       search_kwargs=search_kwargs)

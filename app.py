@@ -4,9 +4,9 @@ from langchain_core.messages import HumanMessage, AIMessage
 from langgraph.graph import MessagesState, StateGraph, START, END
 from langgraph.prebuilt import ToolNode, tools_condition
 
-from app.augment.GradeDocuments import grade_documents
+from app.augment.grade_documents import grade_documents
 from app.augment.rewrite_question import rewrite_question
-from app.generation.GenerateOrQuery import generate_query_or_respond
+from app.retrieve.generate_or_query import generate_query_or_respond
 from app.generation.generate import generate_answer
 from app.retrieve.retriever import retriever_tool
 
