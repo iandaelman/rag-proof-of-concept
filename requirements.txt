@@ -11,3 +11,4 @@ langchain-core
 langchain-text-splitters
 datasets
 python-dotenv
+streamlit

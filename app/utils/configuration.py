@@ -17,13 +17,13 @@ def get_evaluation_model():
 
 
 def get_response_model():
-    return ChatOllama(model=response_model_name, temperature=0)
-    #return ChatOpenAI(model="gpt-4o-mini", temperature=0)
+    #return ChatOllama(model=response_model_name, temperature=0)
+    return ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
 
 def get_embedding():
-    return OllamaEmbeddings(model='mxbai-embed-large')
-    #return OpenAIEmbeddings(model="text-embedding-3-small")
+    #return OllamaEmbeddings(model='mxbai-embed-large')
+    return OpenAIEmbeddings(model="text-embedding-3-small")
 
 
 def get_retrieve_config(retrieval_method: RetrievalMethod):

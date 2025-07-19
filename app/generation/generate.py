@@ -25,6 +25,15 @@ def generate_answer(state: MessagesState) -> MessagesState:
     context = state["messages"][-1].content
     prompt = GENERATE_PROMPT.format(question=question, context=context)
     response = response_model.invoke([{"role": "user", "content": prompt}])
+    return MessagesState(messages=[response])
+
+
+def generate_answer_with_evaluation(state: MessagesState) -> MessagesState:
+    """Generate an answer."""
+    question = state["messages"][0].content
+    context = state["messages"][-1].content
+    prompt = GENERATE_PROMPT.format(question=question, context=context)
+    response = response_model.invoke([{"role": "user", "content": prompt}])
     evaluate_answer(question, context, response.content)
     return MessagesState(messages=[response])
 

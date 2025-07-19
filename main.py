@@ -5,12 +5,12 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import ToolNode
 from langgraph.prebuilt import tools_condition
 
-from app.generation.GenerateOrQuery import generate_query_or_respond
 from app.augment.GradeDocuments import grade_documents
 from app.augment.evalutation import evaluate_answers
-from app.generation.generate import generate_answer
-from app.retrieve.retriever import retriever_tool
 from app.augment.rewrite_question import rewrite_question
+from app.generation.GenerateOrQuery import generate_query_or_respond
+from app.generation.generate import generate_answer_with_evaluation
+from app.retrieve.retriever import retriever_tool
 from app.test_data import ragas_data_set
 
 load_dotenv()
@@ -23,7 +23,7 @@ def main():
     workflow.add_node("generate_query_or_respond", generate_query_or_respond)
     workflow.add_node("tools", ToolNode([retriever_tool]))
     workflow.add_node(rewrite_question)
-    workflow.add_node(generate_answer)
+    workflow.add_node(generate_answer_with_evaluation)
 
     workflow.add_edge(START, "generate_query_or_respond")
 
@@ -40,19 +40,16 @@ def main():
         # Assess agent decision
         grade_documents,
         {
-            "generate_answer": "generate_answer",
+            "generate_answer_with_evaluation": "generate_answer_with_evaluation",
             "rewrite_question": "rewrite_question"
         }
 
     )
-    workflow.add_edge("generate_answer", END)
+    workflow.add_edge("generate_answer_with_evaluation", END)
     workflow.add_edge("rewrite_question", "generate_query_or_respond")
 
     # Compile
     graph = workflow.compile()
-
-    # user_input = input("Wat is uw vraag? ")
-    # input_message = HumanMessage(content=user_input)
 
     for question in ragas_data_set["user_input"]:
         print("Processing question:", question)
