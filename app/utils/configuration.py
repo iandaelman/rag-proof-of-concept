@@ -8,8 +8,8 @@ load_dotenv()
 
 #response_model_name = "mistral:7b"
 #response_model_name = "granite3.3:8b"
-response_model_name = "qwen3:8b"
-#response_model_name = "llama3.2"
+#response_model_name = "qwen3:8b"
+response_model_name = "llama3.2"
 
 
 def get_evaluation_model():
@@ -30,7 +30,7 @@ def get_retrieve_config(retrieval_method: RetrievalMethod):
     if retrieval_method == RetrievalMethod.MMR:
         return "mmr", {"k": 3, "fetch_k": 20, "lambda_mult": 0.5}
     elif retrieval_method == RetrievalMethod.SIMILARITY_SEARCH:
-        return "similarity", {"k": 4}
+        return "similarity", {"k": 5}
     elif retrieval_method == RetrievalMethod.SIMILARITY_SCORE_THRESHOLD:
         return "similarity_score_threshold", {"score_threshold": 0.1}
 

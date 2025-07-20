@@ -6,16 +6,18 @@ from langgraph.prebuilt import ToolNode, tools_condition
 
 from app.augment.grade_documents import grade_documents
 from app.augment.rewrite_question import rewrite_question
-from app.retrieve.generate_or_query import generate_query_or_respond
 from app.generation.generate import generate_answer
+from app.retrieve.generate_or_query import generate_query_or_respond
 from app.retrieve.retriever import retriever_tool
 
 load_dotenv()
+
 
 @st.cache_resource
 def build_graph():
     workflow = StateGraph(MessagesState)
     workflow.add_node("generate_query_or_respond", generate_query_or_respond)
+   # workflow.add_node("tools", ToolNode([myminfin_retriever_tool]))
     workflow.add_node("tools", ToolNode([retriever_tool]))
     workflow.add_node(rewrite_question)
     workflow.add_node(generate_answer)
@@ -30,6 +32,7 @@ def build_graph():
     workflow.add_edge("rewrite_question", "generate_query_or_respond")
 
     return workflow.compile()
+
 
 graph = build_graph()
 

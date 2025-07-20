@@ -1,9 +1,9 @@
 from datasets import Dataset
 from ragas import RunConfig, evaluate
-from ragas.metrics import LLMContextRecall, Faithfulness, FactualCorrectness, AnswerCorrectness, AnswerAccuracy
+from ragas.metrics import Faithfulness, FactualCorrectness, AnswerCorrectness, AnswerAccuracy
 
 from app.utils.configuration import get_evaluation_model, response_model_name
-from app.test_data import ragas_data_set
+from resources.test_data import ragas_data_set
 
 
 def evaluate_answers():

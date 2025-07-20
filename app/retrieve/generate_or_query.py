@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 from langchain_core.messages import SystemMessage
 from langgraph.graph import MessagesState
 
-from app.retrieve.retriever import retriever_tool
+from app.retrieve.retriever import myminfin_retriever_tool, retriever_tool
 from app.utils.configuration import get_response_model
 
 load_dotenv()
@@ -33,8 +33,10 @@ def generate_query_or_respond(state: MessagesState) -> MessagesState:
 
     prompt = QUERY_OR_RESPOND_PROMPT.format(question=question)
 
+    # response_model_with_tools = response_model.bind_tools([myminfin_retriever_tool])
     response_model_with_tools = response_model.bind_tools([retriever_tool])
     response = response_model_with_tools.invoke([SystemMessage(content=prompt)])
+    print(response)
 
     return MessagesState(messages=[response])
 

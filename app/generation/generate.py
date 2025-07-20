@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 from langgraph.graph import MessagesState
 
 from app.utils.configuration import get_response_model
-from app.test_data import ragas_data_set
+from resources.test_data import ragas_data_set
 
 load_dotenv()
 
