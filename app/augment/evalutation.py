@@ -3,7 +3,7 @@ import os
 from datasets import Dataset
 from ragas import RunConfig, evaluate
 from ragas.metrics import Faithfulness, FactualCorrectness, AnswerCorrectness, AnswerAccuracy
-from app.test_data import ragas_data_set
+from resources.test_data import ragas_data_set
 from app.utils.configuration import get_evaluation_model, response_model_name
 
 
