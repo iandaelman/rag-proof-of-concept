@@ -22,7 +22,6 @@ def myminfin_retriever_tool(query: str) -> tuple[str, list]:
 
     summary_text = "\n\n".join(results)
 
-    # You can optionally create a structured "artifact" (e.g., a list of dicts)
     artifact = [doc.page_content for doc in docs]
 
     return summary_text, artifact
