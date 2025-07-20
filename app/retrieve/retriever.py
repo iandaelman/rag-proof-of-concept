@@ -10,7 +10,6 @@ def myminfin_retriever_tool(query: str) -> tuple[str, list]:
     """
     This tool searches and returns the information about myminfin support questions.
     """
-    print(query)
     docs = retriever.invoke(query)
 
     if not docs:
