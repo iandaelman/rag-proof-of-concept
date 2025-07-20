@@ -9,8 +9,8 @@ from langchain_community.document_loaders import (
 from langchain_core.vectorstores import VectorStoreRetriever
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from app.utils.configuration import get_embedding, get_retrieve_config, response_model_name
 from app.utils.RetrievalMethod import RetrievalMethod
+from app.utils.configuration import get_embedding, get_retrieve_config, response_model_name
 
 
 def add_metadata(doc, doc_type):

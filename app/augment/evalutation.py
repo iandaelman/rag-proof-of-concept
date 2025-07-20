@@ -1,9 +1,10 @@
+import os
+
 from datasets import Dataset
 from ragas import RunConfig, evaluate
 from ragas.metrics import Faithfulness, FactualCorrectness, AnswerCorrectness, AnswerAccuracy
-
+from app.test_data import ragas_data_set
 from app.utils.configuration import get_evaluation_model, response_model_name
-from resources.test_data import ragas_data_set
 
 
 def evaluate_answers():
@@ -19,6 +20,7 @@ def evaluate_answers():
     df = score.to_pandas()
     clean_response_model_name = response_model_name.split(":")[0]
     file_name = f"test_results/{clean_response_model_name}_test_results.csv"
+    os.makedirs("test_results", exist_ok=True)
     df.to_csv(file_name, index=False)
 
 
