@@ -1,8 +1,7 @@
 from dotenv import load_dotenv
-from langchain_core.messages import SystemMessage
 from langgraph.graph import MessagesState
 
-from app.retrieve.retriever import retriever_tool
+from app.retrieve.retriever import myminfin_retriever_tool
 from app.utils.configuration import get_response_model
 
 load_dotenv()
@@ -33,9 +32,11 @@ def generate_query_or_respond(state: MessagesState) -> MessagesState:
 
     prompt = QUERY_OR_RESPOND_PROMPT.format(question=question)
 
-    response_model_with_tools = response_model.bind_tools([retriever_tool])
-    # response = response_model_with_tools.invoke([SystemMessage(content=prompt)])
+    response_model_with_tools = response_model.bind_tools([myminfin_retriever_tool])
+
+    #TODO maak check de verschillende modellen die hiermee niet werken, llama3.2 werkt hier niet mee maar wel met:
     response = response_model_with_tools.invoke(prompt)
+    #response = response_model_with_tools.invoke([SystemMessage(content=prompt)])
 
     return MessagesState(messages=[response])
 
