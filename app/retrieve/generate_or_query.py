@@ -34,7 +34,8 @@ def generate_query_or_respond(state: MessagesState) -> MessagesState:
     prompt = QUERY_OR_RESPOND_PROMPT.format(question=question)
 
     response_model_with_tools = response_model.bind_tools([retriever_tool])
-    response = response_model_with_tools.invoke([SystemMessage(content=prompt)])
+    # response = response_model_with_tools.invoke([SystemMessage(content=prompt)])
+    response = response_model_with_tools.invoke(prompt)
 
     return MessagesState(messages=[response])
 
