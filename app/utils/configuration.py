@@ -6,10 +6,10 @@ from app.utils.RetrievalMethod import RetrievalMethod
 
 load_dotenv()
 
-#response_model_name = "mistral:7b"
-#response_model_name = "granite3.3:8b"
-#response_model_name = "qwen3:8b"
-response_model_name = "llama3.2"
+#response_model_name = "llama3.1:8b-instruct-q4_K_M"
+#response_model_name = "mistral:7b-instruct"
+#response_model_name = "qwen2.5:7b-instruct"
+response_model_name = "llama3.2:1b-instruct-fp16"
 
 
 def get_evaluation_model():
