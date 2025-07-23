@@ -9,7 +9,7 @@ load_dotenv()
 #response_model_name = "llama3.1:8b-instruct-q4_K_M"
 #response_model_name = "mistral:7b-instruct"
 #response_model_name = "qwen2.5:7b-instruct"
-response_model_name = "llama3.2:1b-instruct-fp16"
+#response_model_name = "llama3.2:3b-instruct-q8_0"
 
 
 def get_evaluation_model():
@@ -18,7 +18,7 @@ def get_evaluation_model():
 
 def get_response_model():
     return ChatOllama(model=response_model_name, temperature=0)
-    #return ChatOpenAI(model="gpt-4o-mini", temperature=0)
+    # return ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
 
 def get_embedding():
@@ -30,8 +30,8 @@ def get_retrieve_config(retrieval_method: RetrievalMethod):
     if retrieval_method == RetrievalMethod.MMR:
         return "mmr", {"k": 3, "fetch_k": 20, "lambda_mult": 0.5}
     elif retrieval_method == RetrievalMethod.SIMILARITY_SEARCH:
-        return "similarity", {"k": 5}
+        return "similarity", {"k": 4}
     elif retrieval_method == RetrievalMethod.SIMILARITY_SCORE_THRESHOLD:
         return "similarity_score_threshold", {"score_threshold": 0.1}
 
-    return "similarity", {"k": 5}
+    return "similarity", {"k": 4}

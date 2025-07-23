@@ -16,11 +16,9 @@ def myminfin_retriever_tool(query: str) -> tuple[str, list]:
         return "I found no relevant information", []
 
     results = []
+
     for i, doc in enumerate(docs):
         results.append(f"Document {i + 1}:\n{doc.page_content}")
-
     summary_text = "\n\n".join(results)
-
     artifact = [doc.page_content for doc in docs]
-
     return summary_text, artifact

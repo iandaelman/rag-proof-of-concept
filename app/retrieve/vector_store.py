@@ -20,9 +20,7 @@ def add_metadata(doc, doc_type):
 
 def build_vector_store(embeddings_function, document_path, db_name, search_type, search_kwargs):
     base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../resources"))
-    print(base_dir)
     persistent_directory = os.path.join(base_dir, "vector_db", db_name)
-    print(persistent_directory)
     loader_mapping = {
         ".md": TextLoader,
         ".txt": TextLoader,
@@ -49,12 +47,11 @@ def build_vector_store(embeddings_function, document_path, db_name, search_type,
                         doc = loader.load()
                         for d in doc:
                             d.metadata = {"source": doc_file_path, "folder": folder}
-
                             documents.append(d)
                     except Exception as e:
                         print(f"Failed to load file {doc_file_path}: {e}")
 
-        # Split the document into chunks
+    # Split the document into chunks
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1250, chunk_overlap=250)
     docs = text_splitter.split_documents(documents)
 
@@ -65,9 +62,11 @@ def build_vector_store(embeddings_function, document_path, db_name, search_type,
     # Create the vector store and persist it automatically
     print("\n--- Creating vector store ---")
 
-    return Chroma.from_documents(
-        docs, embeddings_function, persist_directory=persistent_directory).as_retriever(search_type=search_type,
-                                                                                        search_kwargs=search_kwargs)
+    # Return a ChromaDB instance
+    return (Chroma.from_documents(
+        docs, embeddings_function, persist_directory=persistent_directory)
+            .as_retriever(search_type=search_type, search_kwargs=search_kwargs)
+            )
 
 
 def init_vector_store(retrieval_method: RetrievalMethod, document_path="knowledge-base-md",

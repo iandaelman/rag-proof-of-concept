@@ -7,7 +7,7 @@ from langgraph.prebuilt import ToolNode, tools_condition
 from app.augment.grade_documents import grade_documents
 from app.augment.rewrite_question import rewrite_question
 from app.generation.generate import generate_answer
-from app.retrieve.generate_or_query import generate_query_or_respond
+from app.retrieve.generate_or_query import retrieve_query_or_respond
 from app.retrieve.retriever import myminfin_retriever_tool
 
 load_dotenv()
@@ -16,19 +16,19 @@ load_dotenv()
 @st.cache_resource
 def build_graph():
     workflow = StateGraph(MessagesState)
-    workflow.add_node("generate_query_or_respond", generate_query_or_respond)
+    workflow.add_node("retrieve_query_or_respond", retrieve_query_or_respond)
     workflow.add_node("tools", ToolNode([myminfin_retriever_tool]))
     workflow.add_node(rewrite_question)
     workflow.add_node(generate_answer)
 
-    workflow.add_edge(START, "generate_query_or_respond")
-    workflow.add_conditional_edges("generate_query_or_respond", tools_condition)
+    workflow.add_edge(START, "retrieve_query_or_respond")
+    workflow.add_conditional_edges("retrieve_query_or_respond", tools_condition)
     workflow.add_conditional_edges("tools", grade_documents, {
         "generate_answer": "generate_answer",
         "rewrite_question": "rewrite_question"
     })
     workflow.add_edge("generate_answer", END)
-    workflow.add_edge("rewrite_question", "generate_query_or_respond")
+    workflow.add_edge("rewrite_question", "retrieve_query_or_respond")
 
     return workflow.compile()
 

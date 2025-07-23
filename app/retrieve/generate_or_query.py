@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+from langchain_core.messages import SystemMessage
 from langgraph.graph import MessagesState
 
 from app.retrieve.retriever import myminfin_retriever_tool
@@ -21,7 +22,7 @@ Determine whether the question is trivial.
 """
 
 
-def generate_query_or_respond(state: MessagesState) -> MessagesState:
+def retrieve_query_or_respond(state: MessagesState) -> MessagesState:
     """
     This methods will call the retriever tool when given a non trivial question is asked.
     In the case of a trivial question it will simply provide a response
@@ -33,11 +34,7 @@ def generate_query_or_respond(state: MessagesState) -> MessagesState:
     prompt = QUERY_OR_RESPOND_PROMPT.format(question=question)
 
     response_model_with_tools = response_model.bind_tools([myminfin_retriever_tool])
-
-    #TODO maak check de verschillende modellen die hiermee niet werken, llama3.2 werkt hier niet mee maar wel met:
     response = response_model_with_tools.invoke(prompt)
-    #response = response_model_with_tools.invoke([SystemMessage(content=prompt)])
-
     return MessagesState(messages=[response])
 
 # Oude methode die niet werkte bij modellen met hogere parameters
