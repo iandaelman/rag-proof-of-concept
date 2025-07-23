@@ -6,9 +6,21 @@ from app.utils.RetrievalMethod import RetrievalMethod
 
 load_dotenv()
 
+#Werkt niet (maakt geen toolcall)
+#response_model_name = "granite3.3:8b"
+#response_model_name = "llama3.1:8b"
 #response_model_name = "llama3.1:8b-instruct-q4_K_M"
-response_model_name = "mistral:7b-instruct"
+#response_model_name = "mistral:7b"
+
+
+#Is functioneel
 #response_model_name = "qwen2.5:7b-instruct"
+
+#Werkt zoals verwacht
+
+
+#response_model_name = "qwen3:8b"
+response_model_name = "llama3.2"
 
 
 def get_evaluation_model():
