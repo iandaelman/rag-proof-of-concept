@@ -7,9 +7,8 @@ from app.utils.RetrievalMethod import RetrievalMethod
 load_dotenv()
 
 #response_model_name = "llama3.1:8b-instruct-q4_K_M"
-#response_model_name = "mistral:7b-instruct"
+response_model_name = "mistral:7b-instruct"
 #response_model_name = "qwen2.5:7b-instruct"
-#response_model_name = "llama3.2:3b-instruct-q8_0"
 
 
 def get_evaluation_model():
