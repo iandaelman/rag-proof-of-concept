@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from langchain_core.messages import SystemMessage
+from langchain_core.messages import SystemMessage, HumanMessage
 from langgraph.graph import MessagesState
 
 from app.retrieve.retriever import myminfin_retriever_tool
@@ -12,11 +12,11 @@ response_model = get_response_model()
 QUERY_OR_RESPOND_PROMPT = """
 This method decides whether to call the retriever tool or respond directly.
 
-If the user's question is trivial, respond directly.  
+If the user's question is trivial, respond directly. Just respond directly. Do not show your reasoning or thinking process.
 If the question is non-trivial, use the retriever tool to generate a response.
 
 Given the user's question:  
-"{question}"
+"{message}"
 
 Determine whether the question is trivial. 
 """
@@ -29,12 +29,14 @@ def retrieve_query_or_respond(state: MessagesState) -> MessagesState:
     Call the model to generate a response based on the current state. Given
     the question, it will decide to retrieve using the retriever tool, or simply respond to the user.
     """
-    question = state["messages"][0].content
+    message = state["messages"][0].content
 
-    prompt = QUERY_OR_RESPOND_PROMPT.format(question=question)
+    prompt = QUERY_OR_RESPOND_PROMPT.format(message=message)
 
     response_model_with_tools = response_model.bind_tools([myminfin_retriever_tool])
+    #Dit moet gebruikt worden voor Llama modellen en de granite modellen
     response = response_model_with_tools.invoke(prompt)
+    #response = response_model_with_tools.invoke([SystemMessage(content=prompt)])
     return MessagesState(messages=[response])
 
 # Oude methode die niet werkte bij modellen met hogere parameters

@@ -15,7 +15,8 @@ REWRITE_PROMPT = (
 response_model = get_response_model()
 
 def rewrite_question(state: MessagesState)-> MessagesState:
-    """Rewrite the original user question.
+    """
+    Rewrite the original user question.
     If the question is in dutch rewrite and translate the question to french.
     If the question is in french rewrite and translate it to English
     """

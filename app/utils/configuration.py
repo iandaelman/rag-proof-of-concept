@@ -8,19 +8,21 @@ load_dotenv()
 
 #Werkt niet (maakt geen toolcall)
 #response_model_name = "granite3.3:8b"
-#response_model_name = "llama3.1:8b"
-#response_model_name = "llama3.1:8b-instruct-q4_K_M"
 #response_model_name = "mistral:7b"
-
 
 #Is functioneel
 #response_model_name = "qwen2.5:7b-instruct"
-
-#Werkt zoals verwacht
-
-
 #response_model_name = "qwen3:8b"
-response_model_name = "llama3.2"
+
+#Werkt zoals verwacht maar roept altijd de tool ook bij triviale vragen
+#response_model_name = "llama3.2:latest"
+#response_model_name = "llama3.1:8b"
+#response_model_name = "llama3.1:8b-instruct-q4_K_M"
+
+
+#Te testen
+response_model_name = "granite3.2:8b"
+#response_model_name = "granite3.2:8b-instruct-q4_K_M"
 
 
 def get_evaluation_model():
@@ -29,7 +31,7 @@ def get_evaluation_model():
 
 def get_response_model():
     return ChatOllama(model=response_model_name, temperature=0)
-    # return ChatOpenAI(model="gpt-4o-mini", temperature=0)
+    #return ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
 
 def get_embedding():
