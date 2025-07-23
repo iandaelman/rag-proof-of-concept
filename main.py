@@ -9,7 +9,7 @@ from app.augment.evalutation import evaluate_answers
 from app.augment.grade_documents import grade_documents_with_evaluation
 from app.augment.rewrite_question import rewrite_question
 from app.generation.generate import generate_answer_with_evaluation
-from app.retrieve.generate_or_query import retrieve_query_or_respond
+from app.retrieve.retrieve_or_respond import retrieve_query_or_respond
 from app.retrieve.retriever import myminfin_retriever_tool
 from resources.test_data import ragas_data_set
 

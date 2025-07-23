@@ -7,7 +7,7 @@ from langgraph.prebuilt import ToolNode, tools_condition
 from app.augment.grade_documents import grade_documents
 from app.augment.rewrite_question import rewrite_question
 from app.generation.generate import generate_answer
-from app.retrieve.generate_or_query import retrieve_query_or_respond
+from app.retrieve.retrieve_or_respond import retrieve_query_or_respond
 from app.retrieve.retriever import myminfin_retriever_tool
 
 load_dotenv()
