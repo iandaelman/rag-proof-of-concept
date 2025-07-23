@@ -16,7 +16,6 @@ from resources.test_data import ragas_data_set
 load_dotenv()
 
 def main():
-    # TODO create seperate states for the when the llm is stuck in a loop and maybe for treating the translations have been done
     workflow = StateGraph(MessagesState)
 
     # Define the nodes we will cycle between
