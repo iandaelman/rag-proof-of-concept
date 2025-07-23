@@ -9,6 +9,7 @@ load_dotenv()
 #Werkt niet (maakt geen toolcall)
 #response_model_name = "granite3.3:8b"
 #response_model_name = "mistral:7b"
+#response_model_name = "granite3.2:8b"
 
 #Is functioneel
 #response_model_name = "qwen2.5:7b-instruct"
@@ -20,9 +21,8 @@ load_dotenv()
 #response_model_name = "llama3.1:8b-instruct-q4_K_M"
 
 
-#Te testen
-response_model_name = "granite3.2:8b"
-#response_model_name = "granite3.2:8b-instruct-q4_K_M"
+#Te testen"
+response_model_name = "granite3.2:8b-instruct-q4_K_M"
 
 
 def get_evaluation_model():

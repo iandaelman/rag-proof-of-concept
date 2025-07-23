@@ -35,8 +35,8 @@ def retrieve_query_or_respond(state: MessagesState) -> MessagesState:
 
     response_model_with_tools = response_model.bind_tools([myminfin_retriever_tool])
     #Dit moet gebruikt worden voor Llama modellen en de granite modellen
-    response = response_model_with_tools.invoke(prompt)
-    #response = response_model_with_tools.invoke([SystemMessage(content=prompt)])
+    #response = response_model_with_tools.invoke(prompt)
+    response = response_model_with_tools.invoke([SystemMessage(content=prompt)])
     return MessagesState(messages=[response])
 
 # Oude methode die niet werkte bij modellen met hogere parameters
