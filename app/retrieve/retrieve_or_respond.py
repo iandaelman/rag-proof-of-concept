@@ -22,7 +22,8 @@ def retrieve_query_or_respond(state: MessagesState) -> MessagesState:
     prompt = QUERY_OR_RESPOND_PROMPT.format(message=message)
 
     response_model_with_tools = response_model.bind_tools([myminfin_retriever_tool])
-    response = response_model_with_tools.invoke([SystemMessage(content=prompt), HumanMessage(content=message)])
+    response = response_model_with_tools.invoke([SystemMessage(content=prompt),
+                                                 HumanMessage(content=message)])
     return MessagesState(messages=[response])
 
 # Oude methode die niet werkte bij modellen met hogere parameters

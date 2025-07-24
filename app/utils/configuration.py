@@ -34,5 +34,4 @@ def get_retrieve_config(retrieval_method: RetrievalMethod):
         return "similarity", {"k": 4}
     elif retrieval_method == RetrievalMethod.SIMILARITY_SCORE_THRESHOLD:
         return "similarity_score_threshold", {"score_threshold": 0.1}
-
     return "similarity", {"k": 4}
