@@ -29,14 +29,12 @@ def retrieve_query_or_respond(state: MessagesState) -> MessagesState:
     Call the model to generate a response based on the current state. Given
     the question, it will decide to retrieve using the retriever tool, or simply respond to the user.
     """
-    message = state["messages"][0].content
+    message = state["messages"][-1].content
 
     prompt = QUERY_OR_RESPOND_PROMPT.format(message=message)
 
     response_model_with_tools = response_model.bind_tools([myminfin_retriever_tool])
-    # Dit moet gebruikt worden voor Llama modellen en de granite modellen
-    # response = response_model_with_tools.invoke(prompt)
-    response = response_model_with_tools.invoke([SystemMessage(content=prompt)])
+    response = response_model_with_tools.invoke([SystemMessage(content=prompt), HumanMessage(content=message)])
     return MessagesState(messages=[response])
 
 # Oude methode die niet werkte bij modellen met hogere parameters

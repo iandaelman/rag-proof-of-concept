@@ -6,12 +6,14 @@ from app.utils.RetrievalMethod import RetrievalMethod
 
 load_dotenv()
 
-#Is functioneel enkel de think moet eruit gefilterd worden
+#Testbare modellen
 #response_model_name = "qwen2.5:7b-instruct"
-response_model_name = "qwen3:8b"
+#response_model_name = "qwen3:8b"
+#response_model_name = "llama3.1:8b-instruct-q4_K_M"
+#response_model_name = "llama3.2:3b"
 
 #Werkt zoals verwacht maar roept altijd de tool ook bij triviale vragen
-#response_model_name = "llama3.1:8b-instruct-q4_K_M"
+response_model_name = "llama3.2:3b"
 
 def get_evaluation_model():
     return ChatOpenAI(model="gpt-4o-mini")

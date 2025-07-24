@@ -7,12 +7,11 @@ from resources.test_data import ragas_data_set
 load_dotenv()
 
 GENERATE_PROMPT = (
-    "You are an assistant for question-answering tasks. "
-    "Use the following pieces of retrieved context to answer the question. "
-    "If you don't know the answer, just say that you don't know. "
-    "Always answer in the language this question: {question} is asked no matter the language of the context provided. "
-    "Give all relevant information"
-    "Question: {question} \n"
+    "You are a helpful assistant supporting users with their MyMinfin IT-related questions.\n"
+    "Based on the following context, please provide a clear and complete answer.\n"
+    "If the answer is not available in the context, kindly let the user know that you don't have enough information.\n"
+    "Always respond in the same language the question is asked, even if the context is in a different language.\n\n"
+    "Question: {question}\n"
     "Context: {context}"
 )
 
