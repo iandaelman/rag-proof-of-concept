@@ -4,23 +4,11 @@ from langgraph.graph import MessagesState
 
 from app.retrieve.retriever import myminfin_retriever_tool
 from app.utils.configuration import get_response_model
+from app.utils.prompts import QUERY_OR_RESPOND_PROMPT
 
 load_dotenv()
 
 response_model = get_response_model()
-
-QUERY_OR_RESPOND_PROMPT = """
-This method decides whether to call the retriever tool or respond directly.
-
-If the user's question is trivial, respond directly. Just respond directly. Do not show your reasoning or thinking process.
-If the question is non-trivial, use the retriever tool to generate a response.
-
-Given the user's question:  
-"{message}"
-
-Determine whether the question is trivial. 
-"""
-
 
 def retrieve_query_or_respond(state: MessagesState) -> MessagesState:
     """
