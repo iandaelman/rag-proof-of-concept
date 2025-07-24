@@ -19,7 +19,6 @@ GRADE_PROMPT = (
 
 class GradeDocuments(BaseModel):
     """Grade documents using a binary score for relevance check."""
-
     binary_score: str = Field(
         description="Relevance score: 'yes' if relevant, or 'no' if not relevant"
     )
@@ -34,7 +33,7 @@ def grade_documents(
     """Determine whether the retrieved documents are relevant to the question."""
 
     # Shortcut: If too many messages (multiple rewrites), stop rewriting
-    if len(state["messages"]) >= 3:
+    if len(state["messages"]) >= 5:
         return "generate_answer"
 
     question = state["messages"][0].content
@@ -61,7 +60,7 @@ def grade_documents_with_evaluation(
     """Determine whether the retrieved documents are relevant to the question."""
 
     # Shortcut: If too many messages (e.g. multiple rewrites), stop rewriting
-    if len(state["messages"]) >= 3:
+    if len(state["messages"]) >= 5:
         return "generate_answer_with_evaluation"
 
     question = state["messages"][0].content
