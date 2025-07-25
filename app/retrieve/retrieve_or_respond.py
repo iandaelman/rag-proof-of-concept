@@ -10,7 +10,7 @@ load_dotenv()
 
 response_model = get_response_model()
 
-def retrieve_query_or_respond(state: MessagesState) -> MessagesState:
+def retrieve_documents_or_respond(state: MessagesState) -> MessagesState:
     """
     This methods will call the retriever tool when given a non trivial question is asked.
     In the case of a trivial question it will simply provide a response
