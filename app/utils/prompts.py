@@ -10,6 +10,16 @@ Given the user's question:
 Determine whether the question is trivial. 
 """
 
+CLASSIFY_QUESTION_PROMPT = (
+    "You are a classifier determining whether a user question is trivial or non-trivial.\n"
+    "A trivial question can be answered directly without needing to retrieve external documents.\n"
+    "A non-trivial question requires additional context or information from documents to answer properly.\n\n"
+    "Here is the user question: {message}\n\n"
+    "Based on the complexity and information need of the question, respond with a single word:\n"
+    "'trivial' if it can be answered directly, or 'non-trivial' if it needs document retrieval."
+)
+
+
 GRADE_DOCUMENTS_PROMPT = (
     "You are a grader assessing relevance of a retrieved document to a user question. \n "
     "Here are the retrieved documents: \n\n {context} \n\n"
