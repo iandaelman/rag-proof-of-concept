@@ -1,4 +1,4 @@
-from langchain_core.messages import RemoveMessage
+from langchain_core.messages import RemoveMessage, HumanMessage
 from langgraph.graph import MessagesState
 
 from app.utils.configuration import get_response_model
@@ -21,5 +21,5 @@ def rewrite_question(state: MessagesState) -> MessagesState:
     questions = "\n".join(m.content for m in messages_to_keep)
 
     prompt = REWRITE_PROMPT.format(questions=questions, original_question=original_question)
-    response = response_model.invoke([{"role": "user", "content": prompt}])
+    response = response_model.invoke([HumanMessage(content=prompt)])
     return MessagesState(messages=[*messages_to_delete, response])

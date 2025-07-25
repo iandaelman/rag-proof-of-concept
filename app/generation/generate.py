@@ -1,7 +1,9 @@
 from dotenv import load_dotenv
+from langchain_core.messages import HumanMessage
 from langgraph.graph import MessagesState
 
 from app.utils.configuration import get_response_model
+from app.utils.prompts import GENERATE_PROMPT
 from resources.test_data import ragas_data_set
 
 load_dotenv()
@@ -14,7 +16,7 @@ def generate_answer(state: MessagesState) -> MessagesState:
     question = state["messages"][0].content
     context = state["messages"][-1].content
     prompt = GENERATE_PROMPT.format(question=question, context=context)
-    response = response_model.invoke([{"role": "user", "content": prompt}])
+    response = response_model.invoke([HumanMessage(content=prompt)])
     return MessagesState(messages=[response])
 
 
@@ -23,7 +25,7 @@ def generate_answer_with_evaluation(state: MessagesState) -> MessagesState:
     question = state["messages"][0].content
     context = state["messages"][-1].content
     prompt = GENERATE_PROMPT.format(question=question, context=context)
-    response = response_model.invoke([{"role": "user", "content": prompt}])
+    response = response_model.invoke([HumanMessage(content=prompt)])
     evaluate_answer(question, context, response.content)
     return MessagesState(messages=[response])
 

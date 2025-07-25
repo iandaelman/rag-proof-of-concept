@@ -1,6 +1,7 @@
 from typing import Literal
 
 from dotenv import load_dotenv
+from langchain_core.messages import SystemMessage, HumanMessage
 from langgraph.graph import MessagesState
 from pydantic import BaseModel, Field
 
@@ -8,8 +9,6 @@ from app.utils.configuration import get_response_model
 from app.utils.prompts import GRADE_PROMPT
 
 load_dotenv()
-
-
 
 
 class GradeDocuments(BaseModel):
@@ -38,7 +37,7 @@ def grade_documents(
     response = (
         grader_model
         .with_structured_output(GradeDocuments).invoke(
-            [{"role": "user", "content": prompt}]
+            [HumanMessage(content=prompt)]
         )
     )
     score = response.binary_score
@@ -65,7 +64,7 @@ def grade_documents_with_evaluation(
     response = (
         grader_model
         .with_structured_output(GradeDocuments).invoke(
-            [{"role": "user", "content": prompt}]
+            [HumanMessage(content=prompt)]
         )
     )
     score = response.binary_score
