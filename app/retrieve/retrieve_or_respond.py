@@ -4,7 +4,7 @@ from langgraph.graph import MessagesState
 
 from app.retrieve.retriever import myminfin_retriever_tool
 from app.utils.configuration import get_response_model
-from app.utils.prompts import QUERY_OR_RESPOND_PROMPT
+from app.utils.prompts import RETRIEVE_DOCUMENTS_OR_RESPOND_PROMPT
 
 load_dotenv()
 
@@ -19,7 +19,7 @@ def retrieve_query_or_respond(state: MessagesState) -> MessagesState:
     """
     message = state["messages"][-1].content
 
-    prompt = QUERY_OR_RESPOND_PROMPT.format(message=message)
+    prompt = RETRIEVE_DOCUMENTS_OR_RESPOND_PROMPT.format(message=message)
 
     response_model_with_tools = response_model.bind_tools([myminfin_retriever_tool])
     response = response_model_with_tools.invoke([SystemMessage(content=prompt),

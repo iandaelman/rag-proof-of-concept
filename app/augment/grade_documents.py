@@ -1,12 +1,12 @@
 from typing import Literal
 
 from dotenv import load_dotenv
-from langchain_core.messages import SystemMessage, HumanMessage
+from langchain_core.messages import HumanMessage
 from langgraph.graph import MessagesState
 from pydantic import BaseModel, Field
 
 from app.utils.configuration import get_response_model
-from app.utils.prompts import GRADE_PROMPT
+from app.utils.prompts import GRADE_DOCUMENTS_PROMPT
 
 load_dotenv()
 
@@ -33,7 +33,7 @@ def grade_documents(
     question = state["messages"][0].content
     context = state["messages"][-1].content
 
-    prompt = GRADE_PROMPT.format(question=question, context=context)
+    prompt = GRADE_DOCUMENTS_PROMPT.format(question=question, context=context)
     response = (
         grader_model
         .with_structured_output(GradeDocuments).invoke(
@@ -60,7 +60,7 @@ def grade_documents_with_evaluation(
     question = state["messages"][0].content
     context = state["messages"][-1].content
 
-    prompt = GRADE_PROMPT.format(question=question, context=context)
+    prompt = GRADE_DOCUMENTS_PROMPT.format(question=question, context=context)
     response = (
         grader_model
         .with_structured_output(GradeDocuments).invoke(
