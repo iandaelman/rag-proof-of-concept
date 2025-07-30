@@ -2,9 +2,10 @@ import os
 
 from datasets import Dataset
 from ragas import RunConfig, evaluate
-from ragas.metrics import Faithfulness, FactualCorrectness, AnswerCorrectness, AnswerAccuracy
-from resources.test_data import ragas_data_set
+from ragas.metrics import Faithfulness, AnswerCorrectness, LLMContextRecall, ResponseRelevancy
+
 from app.utils.configuration import get_evaluation_model, response_model_name
+from resources.test_data import ragas_data_set
 
 
 def evaluate_answers():
@@ -12,9 +13,9 @@ def evaluate_answers():
     dataset = Dataset.from_dict(ragas_data_set)
     my_run_config = RunConfig(max_workers=64, timeout=6000)
     score = evaluate(dataset, metrics=[Faithfulness(),
-                                       FactualCorrectness(),
+                                       ResponseRelevancy(),
                                        AnswerCorrectness(),
-                                       AnswerAccuracy()],
+                                       LLMContextRecall()],
                      llm=get_evaluation_model(), run_config=my_run_config)
 
     df = score.to_pandas()
