@@ -2,6 +2,7 @@ ragas_data_set = {
     "user_input": [
         "Wie is de product owner van AGPD?",
         "Wie is de product owner van AGPR en kan je de contactgegevens geven?",
+        "Kan je me alle contactgegevens geven voor het fragment UBO-register, ook de SNOW groep.",
         "Hoe of waar moet ik mijn tijd loggen voor de support?",
         "Een gebruiker heeft geen toegang tot een functionaliteit wat moet ik hiermee doen",
         "Er is een probleem met attest service, wie kan ik hiervoor contacteren?",
@@ -14,7 +15,8 @@ ragas_data_set = {
     "answer": [],
     "ground_truth": [
         "De product owner van AGPD is Kelly Fugarino en je kan haar contacteren via myminfin.agdp_aapd@temp.minfin.be",
-        "De product owner van AGPR is Adil Soussi Nachit en je kan hem contacteren via aaii-agpr.myminfin@minfin.fed.be",        "Ce n’est pas à MMF de traiter ; il faut l’envoyer à Florent Defour (dev), Cédric Micha (ABA) et Patrick Bottu (SM, équipe MyRent).",
+        "De product owner van AGPR is Adil Soussi Nachit en je kan hem contacteren via aaii-agpr.myminfin@minfin.fed.be",
+        "Fragment: UBO-register – Contactgegevens\n- ICT\n  - Group SNOW: TRES_GRP_CIFI\n  - Service manager: Christophe MARTIN (back-up: Vivian VACHAUDEZ)\n- Business\n  - Business analyst: Sébastien GUILLAUME",
         """Where to log support time (from most preferred to least preferred):
     
         1. Related ticket
@@ -81,8 +83,8 @@ Algemeen: support-egov@minfin.fed.be""",
         
         Voorbeeld: {"restMessages":[{"type":"SUCCESS","bundleKey":"queued files : 1","sticky":false,"date":"2023-07-03T13:41:29.848+0000"}],"mustRedirectToHome":false,"sessionExpired":false,"error":false}
          """,
-        """Je kan het volgende antwoorden: MYMINFIN slaat geen gegevens op. Als het proces niet toelaatom te annuleren, moet de gebruiker contact opnemen met deafdeling die het document heeft ontvangen.
-    Ik vermoed dat dit document is verstuurd via Antwoord op een brief - in dit geval moet de klant de gebruikte driecijferige codemeedelen en moet je het ticket doorsturen naar het SOH-team.Die kunnen je vertellen met welke bevoegde service contactmoet worden opgenomen .
+        """Je kan het volgende antwoorden: MYMINFIN slaat geen gegevens op. Als het proces niet toelaatom te annuleren, moet de gebruiker contact opnemen met de afdeling die het document heeft ontvangen.
+    Ik vermoed dat dit document is verstuurd via Antwoord op een brief - in dit geval moet de klant de gebruikte driecijferige code meedelen en moet je het ticket doorsturen naar het SOH-team. Die kunnen je vertellen met welke bevoegde service contactmoet worden opgenomen .
     Wij kunnen u niet helpen.""",
         """Indien u niet de wettelijke vertegenwoordiger van deonderneming bent, hebt u een rol nodig om in te loggen inMYMINFIN in naam van uw eigen onderneming (inclusieffilialen).
             U wilt in MYMINFIN toegang tot :
@@ -94,7 +96,8 @@ Algemeen: support-egov@minfin.fed.be""",
             Rollen
             hoe toekennen of aanvragen van een rol :
             Beheer van detoegangsaanvragen in de rollenadministratie- RMA - Loginhulp.be
-            Eens dit in orde is, logt u aan op MyMinfin en identificeert uzich “in naam van een onderneming”. Selecteer uw eigen onderneming (of een filiaal).""",
+            Eens dit in orde is, logt u aan op MyMinfin en identificeert uzich “in naam van een onderneming”. 
+            Selecteer uw eigen onderneming (of een filiaal).""",
         """service : AGDP - HYPOIMAGE
 contacts : rzsj.operationeleondersteuning@minfin.fed.be ou PATDOC-RZSJ-Hypo (1e ligne)
  - andy.vanrompuy@minfin.fed.be (ICT - servicemanager ad interim)
