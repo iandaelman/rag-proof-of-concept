@@ -1,7 +1,7 @@
 ragas_data_set = {
     "user_input": [
-        "Wie is de product owner van AGDP en kan je de contactgegevens geven?",
-        "Wie is de product owner van AGPR en kan je de contactgegevens geven?",
+        "Wie is de product owner van AGPD?",
+        "Wie is de product owner van AGPR en kan je de contactgegevens geven??",
         "Kan je me alle contactgegevens geven voor het fragment UBO-register, ook de SNOW groep.",
         "Een burger krijgt non stop nieuwe documenten, wat moet ik hiermee doen?",
         "Iemand heeft gevraagd naar de auditlogs wat moet ik hiermee doen?",
@@ -17,7 +17,7 @@ ragas_data_set = {
     "retrieved_contexts": [],
     "answer": [],
     "ground_truth": [
-        "De product owner van AGDP is Kelly Fugarino en je kan haar contacteren via myminfin.agdp_aapd@temp.minfin.be",
+        "De product owner van AGPD is Kelly Fugarino en je kan haar contacteren via myminfin.agdp_aapd@temp.minfin.be",
         "De product owner van AGPR is Adil Soussi Nachit en je kan hem contacteren via aaii-agpr.myminfin@minfin.fed.be",
         "Fragment: UBO-register – Contactgegevens\n- ICT\n  - Group SNOW: TRES_GRP_CIFI\n  - Service manager: Christophe MARTIN (back-up: Vivian VACHAUDEZ)\n- Business\n  - Business analyst: Sébastien GUILLAUME",
         "Ce n’est pas à MMF de traiter ; il faut l’envoyer à Florent Defour (dev), Cédric Micha (ABA) et Patrick Bottu (SM, équipe MyRent).",

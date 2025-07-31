@@ -1,3 +1,5 @@
+import os
+
 from langchain_core.tools import tool
 
 from app.retrieve.vector_store import init_vector_store
@@ -17,8 +19,13 @@ def myminfin_retriever_tool(query: str) -> tuple[str, list]:
 
     results = []
 
-    for i, doc in enumerate(docs):
-        results.append(f"Document {i + 1}:\n{doc.page_content}")
+    for doc in docs:
+        source_path = doc.metadata.get("source", "Unknown source")
+        source_file = os.path.basename(source_path) if source_path else "Unknown file"
+        source_name = os.path.splitext(source_file)[0]
+        results.append(
+            f"Source: {source_name}\n{doc.page_content}"
+        )
     summary_text = "\n\n".join(results)
     artifact = [doc.page_content for doc in docs]
     return summary_text, artifact

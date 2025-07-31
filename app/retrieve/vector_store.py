@@ -52,7 +52,7 @@ def build_vector_store(embeddings_function, document_path, db_name, search_type,
                         print(f"Failed to load file {doc_file_path}: {e}")
 
     # Split the document into chunks
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1250, chunk_overlap=250)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=500)
     docs = text_splitter.split_documents(documents)
 
     # Display information about the split documents

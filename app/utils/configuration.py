@@ -7,7 +7,7 @@ from app.utils.RetrievalMethod import RetrievalMethod
 load_dotenv()
 
 #Testbare modellen
-response_model_name = "qwen2.5:7b-instruct"
+response_model_name = "qwen2.5:7b"
 #response_model_name = "qwen3:8b"
 #response_model_name = "llama3.1:8b-instruct-q4_K_M"
 #response_model_name = "llama3.2:3b"
@@ -31,7 +31,7 @@ def get_retrieve_config(retrieval_method: RetrievalMethod):
     if retrieval_method == RetrievalMethod.MMR:
         return "mmr", {"k": 3, "fetch_k": 20, "lambda_mult": 0.5}
     elif retrieval_method == RetrievalMethod.SIMILARITY_SEARCH:
-        return "similarity", {"k": 4}
+        return "similarity", {"k": 5}
     elif retrieval_method == RetrievalMethod.SIMILARITY_SCORE_THRESHOLD:
         return "similarity_score_threshold", {"score_threshold": 0.1}
-    return "similarity", {"k": 4}
+    return "similarity", {"k": 5}

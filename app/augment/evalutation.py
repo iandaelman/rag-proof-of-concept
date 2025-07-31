@@ -12,10 +12,10 @@ def evaluate_answers():
     normalize_contexts(ragas_data_set)
     dataset = Dataset.from_dict(ragas_data_set)
     my_run_config = RunConfig(max_workers=64, timeout=6000)
-    score = evaluate(dataset, metrics=[Faithfulness(),
-                                       ResponseRelevancy(),
-                                       AnswerCorrectness(),
-                                       LLMContextRecall()],
+    score = evaluate(dataset, metrics=[Faithfulness(), # measures how factually consistent a response is with the retrieved context
+                                       ResponseRelevancy(), #  how relevant a response is to the user input, An answer is considered relevant if it directly and appropriately addresses the original question.
+                                       AnswerCorrectness(), #Measures answer correctness compared to ground truth as a combination of factuality and semantic similarity.
+                                       LLMContextRecall()], #Measures how well the retrieved context includes all the necessary information to answer the question by estimating the proportion of relevant facts found (true positives) versus missing facts (false negatives).
                      llm=get_evaluation_model(), run_config=my_run_config)
 
     df = score.to_pandas()
