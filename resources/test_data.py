@@ -1,6 +1,6 @@
 ragas_data_set = {
     "user_input": [
-        "Wie is de product owner van AGPD?",
+        "Wie is de product owner van AGDP?",
         "Wie is de product owner van AGPR en kan je de contactgegevens geven?",
         "Kan je me alle contactgegevens geven voor het fragment UBO-register, ook de SNOW groep.",
         "Hoe of waar moet ik mijn tijd loggen voor de support?",
@@ -14,7 +14,7 @@ ragas_data_set = {
     "retrieved_contexts": [],
     "answer": [],
     "ground_truth": [
-        "De product owner van AGPD is Kelly Fugarino en je kan haar contacteren via myminfin.agdp_aapd@temp.minfin.be",
+        "De product owner van AGDP is Kelly Fugarino en je kan haar contacteren via myminfin.agdp_aapd@temp.minfin.be",
         "De product owner van AGPR is Adil Soussi Nachit en je kan hem contacteren via aaii-agpr.myminfin@minfin.fed.be",
         "Fragment: UBO-register – Contactgegevens\n- ICT\n  - Group SNOW: TRES_GRP_CIFI\n  - Service manager: Christophe MARTIN (back-up: Vivian VACHAUDEZ)\n- Business\n  - Business analyst: Sébastien GUILLAUME",
         """Where to log support time (from most preferred to least preferred):
