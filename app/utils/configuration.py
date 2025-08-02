@@ -8,8 +8,10 @@ load_dotenv()
 
 #Testbare modellen
 #response_model_name = "qwen3:8b"
-#response_model_name = "llama3.1:8b-instruct-q4_K_M"
-response_model_name = "llama3.2:3b"
+response_model_name = "llama3.1:8b-instruct-q4_K_M"
+#response_model_name = "qwen2.5:7b-instruct"
+#response_model_name = "qwen2.5:7b"
+#response_model_name = "llama3.2:3b"
 
 
 def get_evaluation_model():

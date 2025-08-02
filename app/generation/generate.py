@@ -1,3 +1,5 @@
+import re
+
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage
 from langgraph.graph import MessagesState
@@ -26,6 +28,7 @@ def generate_answer_with_evaluation(state: MessagesState) -> MessagesState:
     context = state["messages"][-1].content
     prompt = GENERATE_ANSWER_PROMPT.format(question=question, context=context)
     response = response_model.invoke([HumanMessage(content=prompt)])
+    response.content = remove_think_sections(response.content)
     evaluate_answer(question, context, response.content)
     return MessagesState(messages=[response])
 
@@ -39,3 +42,7 @@ def evaluate_answer(question: str, context: str, answer: str):
     # Set context and answer at the correct index
     ragas_data_set["retrieved_contexts"][question_index] = context
     ragas_data_set["answer"][question_index] = answer if answer is not None else ""
+
+
+def remove_think_sections(text: str) -> str:
+    return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()

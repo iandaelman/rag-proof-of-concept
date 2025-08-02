@@ -1,6 +1,6 @@
 ragas_data_set = {
     "user_input": [
-        "Wie is de product owner van AGDP?",
+        "Wie is de product owner van AGDP en kan je de contactgegevens geven?",
         "Wie is de product owner van AGPR en kan je de contactgegevens geven?",
         "Kan je me alle contactgegevens geven voor het fragment UBO-register, ook de SNOW groep.",
         "Hoe of waar moet ik mijn tijd loggen voor de support?",

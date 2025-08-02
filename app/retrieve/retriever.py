@@ -10,7 +10,8 @@ retriever = init_vector_store(RetrievalMethod.SIMILARITY_SEARCH)
 @tool(response_format="content_and_artifact")
 def myminfin_retriever_tool(query: str) -> tuple[str, list]:
     """
-    This tool searches and returns the information about myminfin support questions.
+    This tool searches and returns information about myminfin support questions.
+    It can also retrieve contact information for other teams.
     """
     docs = retriever.invoke(query)
 

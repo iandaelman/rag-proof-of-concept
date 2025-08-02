@@ -3,6 +3,7 @@ This method decides whether to call the retriever tool or respond directly.
 
 If the user's question is trivial, respond directly. Just respond directly. Do not show your reasoning or thinking process.
 If the question is non-trivial, use the retriever tool to generate a response.
+If in doubt, use the retriever tool to make sure.
 
 Given the user's question:  
 "{message}"
@@ -43,7 +44,8 @@ GENERATE_ANSWER_PROMPT = (
     "Based on the following context, please provide a clear and complete answer.\n"
     "If the answer is not available in the context, kindly let the user know that you don't have enough information.\n"
     "If the context contains a source, always mention it in your answer as the reference.\n"
-    "Always respond in the same language this question {question} is asked, even if the context is in a different language.\n\n"
+    "Always respond in the same language this question {question} is asked, even if the context is in a different language.\n"
+    "Do not use Markdown or any special formatting in your answer, respond in plain text only.\n\n"
     "Question: {question}\n"
     "Context: {context}"
 )
