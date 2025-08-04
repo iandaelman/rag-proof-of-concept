@@ -1,16 +1,15 @@
 from dotenv import load_dotenv
 from langchain_ollama import ChatOllama, OllamaEmbeddings
-from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+from langchain_openai import ChatOpenAI
 
 from app.utils.RetrievalMethod import RetrievalMethod
 
 load_dotenv()
 
-#Testbare modellen
-#response_model_name = "qwen3:8b"
-response_model_name = "llama3.1:8b-instruct-q4_K_M"
+# Testbare modellen
+response_model_name = "qwen3:8b"
+#response_model_name = "llama3.1:8b-instruct-q4_K_M"
 #response_model_name = "qwen2.5:7b-instruct"
-#response_model_name = "qwen2.5:7b"
 #response_model_name = "llama3.2:3b"
 
 
@@ -20,12 +19,10 @@ def get_evaluation_model():
 
 def get_response_model():
     return ChatOllama(model=response_model_name, temperature=0)
-    #return ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
 
 def get_embedding():
     return OllamaEmbeddings(model='mxbai-embed-large')
-    #return OpenAIEmbeddings(model="text-embedding-3-small")
 
 
 def get_retrieve_config(retrieval_method: RetrievalMethod):
