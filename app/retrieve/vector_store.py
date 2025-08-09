@@ -35,15 +35,13 @@ def build_vector_store(embeddings_function, document_path, db_name, search_type,
     documents = []
     # Iterate over each folder in the path
     for folder in glob.glob(f"{document_path}/*"):
-        print(folder)
         if os.path.isdir(folder):
             # Iterate over each file in the folder
-            for ext, loader_cls in loader_mapping.items():
+            for ext, base_loader_type in loader_mapping.items():
                 for doc_file_path in glob.glob(os.path.join(folder, f"*{ext}")):
-                    print(doc_file_path)
                     try:
                         # Use the appropriate loader based on the file extension
-                        loader = loader_cls(doc_file_path, encoding="utf-8")
+                        loader = base_loader_type(doc_file_path, encoding="utf-8")
                         doc = loader.load()
                         for d in doc:
                             d.metadata = {"source": doc_file_path, "folder": folder}

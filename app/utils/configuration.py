@@ -14,7 +14,7 @@ response_model_name = "qwen3:8b"
 
 
 def get_evaluation_model():
-    return ChatOpenAI(model="gpt-4o-mini")
+    return ChatOllama(model="gemma3:4b")
 
 
 def get_response_model():
