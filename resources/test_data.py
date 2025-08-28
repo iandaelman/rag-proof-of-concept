@@ -53,7 +53,7 @@ Douane & Accijnzen: support-egov.da@minfin.fed.be
 Thesaurie: support-egov.thesaurie@minfin.fed.be
 
 Algemeen: support-egov@minfin.fed.be""",
-        "Je kan contact ponemen met het development team via grp-minfin-finattest-devteam@minfin.fed.be",
+        "Je kan contact opnemen met het development team via grp-minfin-finattest-devteam@minfin.fed.be",
         """
         Hier zijn de stappen die gevolgd moeten worden wanneer het RV-team vraagt om een “repush” uit te voeren:
         
@@ -83,20 +83,20 @@ Algemeen: support-egov@minfin.fed.be""",
         
         Voorbeeld: {"restMessages":[{"type":"SUCCESS","bundleKey":"queued files : 1","sticky":false,"date":"2023-07-03T13:41:29.848+0000"}],"mustRedirectToHome":false,"sessionExpired":false,"error":false}
          """,
-        """Je kan het volgende antwoorden: MYMINFIN slaat geen gegevens op. Als het proces niet toelaatom te annuleren, moet de gebruiker contact opnemen met de afdeling die het document heeft ontvangen.
+        """Je kan het volgende antwoorden: MYMINFIN slaat geen gegevens op. Als het proces niet toelaat om te annuleren, moet de gebruiker contact opnemen met de afdeling die het document heeft ontvangen.
     Ik vermoed dat dit document is verstuurd via Antwoord op een brief - in dit geval moet de klant de gebruikte driecijferige code meedelen en moet je het ticket doorsturen naar het SOH-team. Die kunnen je vertellen met welke bevoegde service contactmoet worden opgenomen .
     Wij kunnen u niet helpen.""",
-        """Indien u niet de wettelijke vertegenwoordiger van deonderneming bent, hebt u een rol nodig om in te loggen inMYMINFIN in naam van uw eigen onderneming (inclusieffilialen).
+        """Indien u niet de wettelijke vertegenwoordiger van de onderneming bent, hebt u een rol nodig om in te loggen in MYMINFIN in naam van uw eigen onderneming (inclusieffilialen).
             U wilt in MYMINFIN toegang tot :
             de berichten van de onderneming, dan hebt u de rol FODFIN Berichten van de onderneming nodig;
-            de documenten en formaliteiten van de onderneming, danhebt u meestal genoeg aan de rol FOD Fin Aanstelling EigenOnderneming met één of meerdere parameters in functievan uw verantwoordelijkheden (bv. Om de BTW formaliteitente beheren, hebt u de parameter ‘Aanstelling BTW' nodig).
-            Indien uw onderneming meerdere filialen telt, hebt u enkel derol nodig die volstaat voor elk van die ondernemingen. Vergeethet begrip ‘mandaten'. Die zijn niet nodig als het om uw eigenonderneming (inclusief filialen) gaat.
+            de documenten en formaliteiten van de onderneming, dan hebt u meestal genoeg aan de rol FOD Fin Aanstelling Eigen Onderneming met één of meerdere parameters in functie van uw verantwoordelijkheden (bv. Om de BTW formaliteiten te beheren, hebt u de parameter ‘Aanstelling BTW' nodig).
+            Indien uw onderneming meerdere filialen telt, hebt u enkel de rol nodig die volstaat voor elk van die ondernemingen. Vergeet het begrip ‘mandaten'. Die zijn niet nodig als het om uw eigen onderneming (inclusief filialen) gaat.
             Voor meer informatie kan u de volgende websites raadplegen :
             welke rol ik moet toekennen : 
             Rollen
             hoe toekennen of aanvragen van een rol :
-            Beheer van detoegangsaanvragen in de rollenadministratie- RMA - Loginhulp.be
-            Eens dit in orde is, logt u aan op MyMinfin en identificeert uzich “in naam van een onderneming”. 
+            Beheer van de toegangsaanvragen in de rollenadministratie- RMA - Login hulp.be
+            Eens dit in orde is, logt u aan op MyMinfin en identificeert u zich “in naam van een onderneming”. 
             Selecteer uw eigen onderneming (of een filiaal).""",
         """service : AGDP - HYPOIMAGE
 contacts : rzsj.operationeleondersteuning@minfin.fed.be ou PATDOC-RZSJ-Hypo (1e ligne)

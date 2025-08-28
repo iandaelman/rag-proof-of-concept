@@ -28,7 +28,7 @@ def generate_answer_with_evaluation(state: MessagesState) -> MessagesState:
     context = state["messages"][-1].content
     prompt = GENERATE_ANSWER_PROMPT.format(question=question, context=context)
     response = response_model.invoke([HumanMessage(content=prompt)])
-    response.content = remove_think_sections(response.content)
+    response.content = sanitize_output(response.content)
     evaluate_answer(question, context, response.content)
     return MessagesState(messages=[response])
 
@@ -44,5 +44,9 @@ def evaluate_answer(question: str, context: str, answer: str):
     ragas_data_set["answer"][question_index] = answer if answer is not None else ""
 
 
-def remove_think_sections(text: str) -> str:
-    return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
+def sanitize_output(text: str) -> str:
+    print("Before:", text)                          # CHANGED: added label
+    cleaned = re.sub(r"<think>.*?</think>", "",     # CHANGED: renamed variable from tst → cleaned
+                     text, flags=re.DOTALL).strip()
+    print("After:", cleaned)                        # CHANGED: now prints the cleaned text, not the original
+    return cleaned

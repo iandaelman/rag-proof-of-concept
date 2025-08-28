@@ -6,7 +6,7 @@ from langgraph.prebuilt import ToolNode, tools_condition
 
 from app.augment.grade_documents import grade_documents
 from app.augment.rewrite_question import rewrite_question
-from app.generation.generate import generate_answer
+from app.generation.generate import generate_answer, sanitize_output
 from app.retrieve.retrieve_or_respond import retrieve_documents_or_respond
 from app.retrieve.retriever import myminfin_retriever_tool
 
@@ -56,6 +56,7 @@ if prompt:
     with st.chat_message("user"):
         st.markdown(prompt)
 
+    # Antwoord van de bot
     with st.chat_message("assistant"):
         with st.spinner("Generatin answer..."):
             input_message = HumanMessage(content=prompt)
@@ -68,7 +69,8 @@ if prompt:
                         for msg in update["messages"]:
                             if isinstance(msg, AIMessage):
                                 output += msg.content + "\n"
-                st.markdown(output.strip())
-                st.session_state.chat_history.append({"role": "assistant", "content": output.strip()})
+                cleaned_output = sanitize_output(output.strip())
+                st.markdown(cleaned_output)
+                st.session_state.chat_history.append({"role": "assistant", "content": cleaned_output})
             except Exception as e:
                 st.error(f"Er ging iets mis: {e}")

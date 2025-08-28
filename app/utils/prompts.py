@@ -9,6 +9,7 @@ Given the user's question:
 "{message}"
 
 Determine whether the question is trivial. 
+If you answer directly do it in the language the user asked the question in.
 """
 
 GRADE_DOCUMENTS_PROMPT = (
