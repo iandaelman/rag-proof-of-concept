@@ -44,9 +44,6 @@ def evaluate_answer(question: str, context: str, answer: str):
     ragas_data_set["answer"][question_index] = answer if answer is not None else ""
 
 
-def sanitize_output(text: str) -> str:
-    print("Before:", text)                          # CHANGED: added label
-    cleaned = re.sub(r"<think>.*?</think>", "",     # CHANGED: renamed variable from tst → cleaned
+def sanitize_output(text: str) -> str:                          # CHANGED: added label
+    return re.sub(r"<think>.*?</think>", "",     # CHANGED: renamed variable from tst → cleaned
                      text, flags=re.DOTALL).strip()
-    print("After:", cleaned)                        # CHANGED: now prints the cleaned text, not the original
-    return cleaned
